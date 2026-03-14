@@ -58,7 +58,7 @@ if st.sidebar.button("Predict Price", key="predict_btn"):
     model_features = model.feature_names_in_
     input_data = input_data.reindex(columns=model_features, fill_value=0)
 
-    price = model.predict(input_data)[0]
+    price = model.predict(input_data)
 
     st.subheader("💰 Estimated House Price")
     st.success(f"${price:,.2f}")
@@ -78,29 +78,29 @@ if st.sidebar.button("Predict Price", key="predict_btn"):
     # Dynamic Price Trend Graph
     # -----------------------
 
-    st.subheader("📊 Predicted Price Trend")
+st.subheader("📊 Predicted Price Trend")
 
-    years = np.array([2019,2020,2021,2022,2023])
+years = np.array([2019,2020,2021,2022,2023])
 
-    base_price = price[0]
+base_price = price
 
-    prices = [
-        base_price * 0.7,
-        base_price * 0.8,
-        base_price * 0.9,
-        base_price * 0.95,
-        base_price
-    ]
+prices = [
+    base_price * 0.7,
+    base_price * 0.8,
+    base_price * 0.9,
+    base_price * 0.95,
+    base_price
+]
 
-    fig1, ax1 = plt.subplots()
+fig, ax = plt.subplots()
 
-    ax1.plot(years, prices, marker="o")
+ax.plot(years, prices, marker="o")
 
-    ax1.set_title("Predicted Price Growth")
-    ax1.set_xlabel("Year")
-    ax1.set_ylabel("Price")
+ax.set_title("Predicted Price Growth")
+ax.set_xlabel("Year")
+ax.set_ylabel("Price")
 
-    st.pyplot(fig1)
+st.pyplot(fig)
 
     # -----------------------
     # Feature Graph
