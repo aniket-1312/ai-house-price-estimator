@@ -54,53 +54,42 @@ input_data = pd.DataFrame({
 
 if st.sidebar.button("Predict Price", key="predict_btn"):
 
-    # Fix feature order
+    # prediction
     model_features = model.feature_names_in_
     input_data = input_data.reindex(columns=model_features, fill_value=0)
 
-    price = model.predict(input_data)
+    price = model.predict(input_data)[0]
 
     st.subheader("💰 Estimated House Price")
     st.success(f"${price:,.2f}")
 
-    # Property Summary
-    st.write("### Property Summary")
-
-    col1, col2, col3 = st.columns(3)
-
-    col1.metric("Area", f"{area} sqft")
-    col2.metric("Bedrooms", bedrooms)
-    col3.metric("Bathrooms", bathrooms)
-
-    st.info("This price is predicted using a Machine Learning model.")
-
     # -----------------------
-    # Dynamic Price Trend Graph
+    # Price Trend Graph
     # -----------------------
 
-st.subheader("📊 Predicted Price Trend")
+    st.subheader("📊 Predicted Price Trend")
 
-years = np.array([2019,2020,2021,2022,2023])
+    years = np.array([2019,2020,2021,2022,2023])
 
-base_price = price
+    base_price = price
 
-prices = [
-    base_price * 0.7,
-    base_price * 0.8,
-    base_price * 0.9,
-    base_price * 0.95,
-    base_price
-]
+    prices = [
+        base_price * 0.7,
+        base_price * 0.8,
+        base_price * 0.9,
+        base_price * 0.95,
+        base_price
+    ]
 
-fig, ax = plt.subplots()
+    fig, ax = plt.subplots()
 
-ax.plot(years, prices, marker="o")
+    ax.plot(years, prices, marker="o")
 
-ax.set_title("Predicted Price Growth")
-ax.set_xlabel("Year")
-ax.set_ylabel("Price")
+    ax.set_title("Predicted Price Growth")
+    ax.set_xlabel("Year")
+    ax.set_ylabel("Price")
 
-st.pyplot(fig)
+    st.pyplot(fig)
 
     # -----------------------
     # Feature Graph
