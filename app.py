@@ -106,25 +106,25 @@ st.pyplot(fig)
     # Feature Graph
     # -----------------------
 
-    st.subheader("📈 Feature Contribution")
+st.subheader("📈 Feature Contribution")
 
-    features = ["Area","Bedrooms","Bathrooms","Stories","Parking"]
+features = ["Area","Bedrooms","Bathrooms","Stories","Parking"]
 
-    values = [
-        area,
-        bedrooms,
-        bathrooms,
-        stories,
-        parking
-    ]
+values = [
+    area,
+    bedrooms,
+    bathrooms,
+    stories,
+    parking
+]
 
-    fig2, ax2 = plt.subplots()
+fig_features, ax = plt.subplots()
 
-    ax2.barh(features, values)
+ax.barh(features, values)
 
-    ax2.set_title("User Property Features")
+ax.set_title("User Property Features")
 
-    st.pyplot(fig2)
+st.pyplot(fig_features)
 
 # -----------------------
 # House Gallery
