@@ -31,21 +31,18 @@ airconditioning = st.sidebar.selectbox("Air Conditioning", ["Yes", "No"])
 prefarea = st.sidebar.selectbox("Preferred Area", ["Yes", "No"])
 furnishing = st.sidebar.selectbox("Furnishing", ["Furnished", "Semi-Furnished", "Unfurnished"])
 
-# -----------------------
-# Convert Inputs
-# -----------------------
-
+# Convert inputs (Correct order)
 input_data = pd.DataFrame({
     "area":[area],
     "bedrooms":[bedrooms],
     "bathrooms":[bathrooms],
     "stories":[stories],
-    "parking":[parking],
     "mainroad_yes":[1 if mainroad=="Yes" else 0],
     "guestroom_yes":[1 if guestroom=="Yes" else 0],
     "basement_yes":[1 if basement=="Yes" else 0],
     "hotwaterheating_yes":[0],
     "airconditioning_yes":[1 if airconditioning=="Yes" else 0],
+    "parking":[parking],
     "prefarea_yes":[1 if prefarea=="Yes" else 0],
     "furnishingstatus_semi-furnished":[1 if furnishing=="Semi-Furnished" else 0],
     "furnishingstatus_unfurnished":[1 if furnishing=="Unfurnished" else 0]
@@ -57,10 +54,10 @@ input_data = pd.DataFrame({
 
 if st.sidebar.button("Predict Price", key="predict_btn"):
 
-    price = model.predict(input_data)
+    price = model.predict(input_data)[0]
 
     st.subheader("💰 Estimated House Price")
-    st.success(f"${price[0]:,.2f}")
+    st.success(f"${price:,.2f}")
 
     # Property Summary
     st.write("### Property Summary")
