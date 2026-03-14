@@ -12,6 +12,10 @@ st.set_page_config(page_title="AI House Price Estimator", layout="wide")
 st.title("🏠 AI House Price Estimator")
 st.write("Predict house prices using Machine Learning")
 
+# -----------------------
+# Sidebar Inputs
+# -----------------------
+
 st.sidebar.header("Enter House Details")
 
 area = st.sidebar.number_input("Area (sqft)", 500, 10000, 2000)
@@ -27,7 +31,10 @@ airconditioning = st.sidebar.selectbox("Air Conditioning", ["Yes", "No"])
 prefarea = st.sidebar.selectbox("Preferred Area", ["Yes", "No"])
 furnishing = st.sidebar.selectbox("Furnishing", ["Furnished", "Semi-Furnished", "Unfurnished"])
 
-# Convert inputs
+# -----------------------
+# Convert Inputs
+# -----------------------
+
 input_data = pd.DataFrame({
     "area":[area],
     "bedrooms":[bedrooms],
@@ -44,6 +51,10 @@ input_data = pd.DataFrame({
     "furnishingstatus_unfurnished":[1 if furnishing=="Unfurnished" else 0]
 })
 
+# -----------------------
+# Prediction Button
+# -----------------------
+
 if st.sidebar.button("Predict Price", key="predict_btn"):
 
     price = model.predict(input_data)
@@ -51,6 +62,7 @@ if st.sidebar.button("Predict Price", key="predict_btn"):
     st.subheader("💰 Estimated House Price")
     st.success(f"${price[0]:,.2f}")
 
+    # Property Summary
     st.write("### Property Summary")
 
     col1, col2, col3 = st.columns(3)
@@ -61,21 +73,11 @@ if st.sidebar.button("Predict Price", key="predict_btn"):
 
     st.info("This price is predicted using a Machine Learning model.")
 
-if st.sidebar.button("Predict Price"):
-
-    price = model.predict(input_data)
-
-    st.subheader("💰 Estimated House Price")
-    st.success(f"${price[0]:,.2f}")
-
-    # -------------------------
+    # -----------------------
     # Dynamic Price Trend Graph
-    # -------------------------
+    # -----------------------
 
     st.subheader("📊 Predicted Price Trend")
-
-    import numpy as np
-    import matplotlib.pyplot as plt
 
     years = np.array([2019,2020,2021,2022,2023])
 
@@ -89,17 +91,44 @@ if st.sidebar.button("Predict Price"):
         base_price
     ]
 
-    fig, ax = plt.subplots()
+    fig1, ax1 = plt.subplots()
 
-    ax.plot(years, prices, marker="o")
+    ax1.plot(years, prices, marker="o")
 
-    ax.set_title("Predicted Price Growth")
-    ax.set_xlabel("Year")
-    ax.set_ylabel("Price")
+    ax1.set_title("Predicted Price Growth")
+    ax1.set_xlabel("Year")
+    ax1.set_ylabel("Price")
 
-    st.pyplot(fig)
+    st.pyplot(fig1)
 
-#Add House Image Gallery
+    # -----------------------
+    # Feature Graph
+    # -----------------------
+
+    st.subheader("📈 Feature Contribution")
+
+    features = ["Area","Bedrooms","Bathrooms","Stories","Parking"]
+
+    values = [
+        area,
+        bedrooms,
+        bathrooms,
+        stories,
+        parking
+    ]
+
+    fig2, ax2 = plt.subplots()
+
+    ax2.barh(features, values)
+
+    ax2.set_title("User Property Features")
+
+    st.pyplot(fig2)
+
+# -----------------------
+# House Gallery
+# -----------------------
+
 st.subheader("🏡 Example Houses")
 
 col1, col2, col3 = st.columns(3)
@@ -113,10 +142,11 @@ with col2:
 with col3:
     st.image("https://images.unsplash.com/photo-1507089947368-19c1da9775ae", caption="Family House")
 
-#Add Interactive Map
-st.subheader("📍 Property Location")
+# -----------------------
+# Map
+# -----------------------
 
-import pandas as pd
+st.subheader("📍 Property Location")
 
 map_data = pd.DataFrame({
     "lat":[22.3039],
@@ -124,24 +154,3 @@ map_data = pd.DataFrame({
 })
 
 st.map(map_data)
-
-#Add Feature Importance Chart
-st.subheader("📈 Feature Contribution")
-
-features = ["Area","Bedrooms","Bathrooms","Stories","Parking"]
-
-values = [
-area,
-bedrooms,
-bathrooms,
-stories,
-parking
-]
-
-fig_features, ax = plt.subplots()
-
-ax.barh(features, values)
-
-ax.set_title("User Property Features")
-
-st.pyplot(fig_features)
