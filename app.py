@@ -54,6 +54,10 @@ input_data = pd.DataFrame({
 
 if st.sidebar.button("Predict Price", key="predict_btn"):
 
+    # Fix feature order
+    model_features = model.feature_names_in_
+    input_data = input_data.reindex(columns=model_features, fill_value=0)
+
     price = model.predict(input_data)[0]
 
     st.subheader("💰 Estimated House Price")
