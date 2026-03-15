@@ -81,6 +81,19 @@ html, body, [class*="css"], .stApp {
     color: #E0EAF4 !important;
 }
 
+/* Section labels — always bright white */
+[data-testid="stSidebar"] .sb-sec-lbl,
+[data-testid="stSidebar"] .sb-sec-lbl *,
+[data-testid="stSidebar"] .sb-sec-lbl span,
+[data-testid="stSidebar"] .sb-sec-lbl div {
+    color: #FFFFFF !important;
+    font-size: 0.65rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.15em !important;
+    text-transform: uppercase !important;
+    opacity: 1 !important;
+}
+
 /* Input & select labels — bright white, clearly readable */
 [data-testid="stSidebar"] label,
 [data-testid="stSidebar"] label p,
@@ -359,16 +372,54 @@ html, body, [class*="css"], .stApp {
 }
 
 .sb-sec {
-    border-top: 1px solid rgba(255,255,255,0.07) !important;
-    margin: 1rem 0 0.4rem !important;
-    padding-top: 0.8rem !important;
+    border-top: 1px solid rgba(255,255,255,0.08) !important;
+    margin: 1.1rem 0 0.5rem !important;
+    padding-top: 0.85rem !important;
 }
-.sb-sec-lbl {
-    font-size: 0.63rem !important; font-weight: 800 !important;
-    letter-spacing: 0.16em !important; text-transform: uppercase !important;
-    color: #00BCD4 !important;
+.sb-sec-lbl-wrap {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 0 6px 10px;
+    border-left: 3px solid #00BCD4;
+    margin-bottom: 0.6rem;
+}
+.sb-sec-lbl,
+.sb-sec-lbl *,
+.sb-sec-lbl span,
+.sb-sec-lbl div {
+    font-size: 0.63rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.16em !important;
+    text-transform: uppercase !important;
+    color: #FFFFFF !important;
     margin-bottom: 0.5rem !important;
-    display: flex; align-items: center; gap: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 1 !important;
+}
+
+/* Section label span */
+[data-testid="stSidebar"] .sb-sec-lbl-wrap {
+    display: flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+    padding: 4px 0 6px 10px !important;
+    border-left: 3px solid #00BCD4 !important;
+    margin-bottom: 0.6rem !important;
+    background: rgba(0,188,212,0.05) !important;
+    border-radius: 0 4px 4px 0 !important;
+}
+[data-testid="stSidebar"] span.sb-sec-lbl,
+[data-testid="stSidebar"] .sb-sec-lbl {
+    color: #FFFFFF !important;
+    font-size: 0.65rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.14em !important;
+    text-transform: uppercase !important;
+    opacity: 1 !important;
+    display: inline !important;
 }
 
 /* ══ GALLERY ══ */
@@ -439,24 +490,24 @@ with st.sidebar:
         unsafe_allow_html=True
     )
     # Size & Structure
-    st.markdown('<div class="sb-sec"><div class="sb-sec-lbl">&#128210; Size &amp; Structure</div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="sb-sec"><div class="sb-sec-lbl-wrap"><span class="sb-sec-lbl">&#128210;&nbsp; Size &amp; Structure</span></div></div>', unsafe_allow_html=True)
     area      = st.number_input("Area (sqft)",    500, 10000, 2000, step=50)
     bedrooms  = st.number_input("Bedrooms",         1,    10,    3)
     bathrooms = st.number_input("Bathrooms",        1,     5,    2)
     stories   = st.number_input("Stories",          1,     4,    2)
     parking   = st.number_input("Parking Spaces",   0,     5,    1)
     # Amenities
-    st.markdown('<div class="sb-sec"><div class="sb-sec-lbl">&#127968; Amenities</div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="sb-sec"><div class="sb-sec-lbl-wrap"><span class="sb-sec-lbl">&#127968;&nbsp; Amenities</span></div></div>', unsafe_allow_html=True)
     mainroad        = st.selectbox("Main Road Access",  ["Yes","No"])
     guestroom       = st.selectbox("Guest Room",        ["Yes","No"])
     basement        = st.selectbox("Basement",          ["Yes","No"])
     airconditioning = st.selectbox("Air Conditioning",  ["Yes","No"])
     prefarea        = st.selectbox("Preferred Area",    ["Yes","No"])
     # Interior
-    st.markdown('<div class="sb-sec"><div class="sb-sec-lbl">&#128716; Interior</div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="sb-sec"><div class="sb-sec-lbl-wrap"><span class="sb-sec-lbl">&#128716;&nbsp; Interior</span></div></div>', unsafe_allow_html=True)
     furnishing = st.selectbox("Furnishing Status", ["Furnished","Semi-Furnished","Unfurnished"])
     # Analysis Settings
-    st.markdown('<div class="sb-sec"><div class="sb-sec-lbl">&#9881; Analysis Settings</div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="sb-sec"><div class="sb-sec-lbl-wrap"><span class="sb-sec-lbl">&#9881;&nbsp; Analysis Settings</span></div></div>', unsafe_allow_html=True)
     roi_years    = st.slider("ROI Projection (Years)", 1, 20, 10)
     appreciation = st.slider("Annual Appreciation %",  2, 15,  7)
 
