@@ -981,6 +981,27 @@ CITY_LOCATIONS = {
     "Jaipur, Rajasthan":     (26.9124, 75.7873),
 }
 
+# Per-city neighborhood scores  [schools, healthcare, markets, transport, green, safety]
+CITY_SCORES = {
+    "Rajkot, Gujarat":       [88, 75, 92, 70, 60, 82],
+    "Ahmedabad, Gujarat":    [85, 80, 94, 78, 55, 79],
+    "Surat, Gujarat":        [82, 78, 96, 75, 50, 77],
+    "Vadodara, Gujarat":     [87, 82, 90, 72, 65, 83],
+    "Gandhinagar, Gujarat":  [91, 85, 80, 74, 78, 90],
+    "Bhavnagar, Gujarat":    [78, 70, 82, 62, 58, 75],
+    "Jamnagar, Gujarat":     [75, 68, 79, 60, 55, 72],
+    "Junagadh, Gujarat":     [72, 66, 76, 58, 62, 70],
+    "Mumbai, Maharashtra":   [90, 88, 98, 95, 45, 72],
+    "Pune, Maharashtra":     [92, 87, 93, 82, 68, 80],
+    "Delhi":                 [88, 85, 97, 90, 42, 65],
+    "Bangalore, Karnataka":  [94, 89, 95, 80, 70, 78],
+    "Chennai, Tamil Nadu":   [89, 86, 91, 85, 58, 76],
+    "Hyderabad, Telangana":  [91, 88, 93, 83, 62, 79],
+    "Kolkata, West Bengal":  [86, 82, 94, 88, 55, 68],
+    "Jaipur, Rajasthan":     [83, 76, 88, 72, 65, 80],
+}
+
+
 search_col, _ = st.columns([3, 5])
 with search_col:
     selected_city = st.selectbox(
@@ -1071,13 +1092,14 @@ with map_col:
 
 with nb_col:
     st.markdown(f'<div style="font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#546E7A;margin-bottom:0.8rem;">📊 {selected_city} — Scores</div>', unsafe_allow_html=True)
+    _sc = CITY_SCORES.get(selected_city, [88, 75, 92, 70, 60, 82])
     nb_items = [
-        ("🏫","Schools & Education", 88,"#1565C0"),
-        ("🏥","Healthcare",          75,"#00C853"),
-        ("🛒","Markets & Shopping",  92,"#00BCD4"),
-        ("🚌","Public Transport",    70,"#FFB300"),
-        ("🌳","Green Spaces",        60,"#4CAF50"),
-        ("🔒","Safety Index",        82,"#7C4DFF"),
+        ("🏫", "Schools & Education", _sc[0], "#1565C0"),
+        ("🏥", "Healthcare",          _sc[1], "#00C853"),
+        ("🛒", "Markets & Shopping",  _sc[2], "#00BCD4"),
+        ("🚌", "Public Transport",    _sc[3], "#FFB300"),
+        ("🌳", "Green Spaces",        _sc[4], "#4CAF50"),
+        ("🔒", "Safety Index",        _sc[5], "#7C4DFF"),
     ]
     for icon, name, score, color in nb_items:
         st.markdown(f"""
