@@ -73,19 +73,36 @@ html, body, [class*="css"], .stApp {
     box-shadow: 4px 0 32px rgba(0,0,0,0.35) !important;
 }
 
-/* Reset all text to readable light color */
-[data-testid="stSidebar"],
-[data-testid="stSidebar"] p,
-[data-testid="stSidebar"] span,
-[data-testid="stSidebar"] div {
+/* ── Base sidebar text ── */
+[data-testid="stSidebar"] {
     color: #E0EAF4 !important;
 }
 
-/* Section labels — always bright white */
+/* ── ALL input/select/slider labels → pure white ── */
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] label p,
+[data-testid="stSidebar"] label span,
+[data-testid="stSidebar"] .stNumberInput > label,
+[data-testid="stSidebar"] .stNumberInput > label p,
+[data-testid="stSidebar"] .stSelectbox > label,
+[data-testid="stSidebar"] .stSelectbox > label p,
+[data-testid="stSidebar"] .stSlider > label,
+[data-testid="stSidebar"] .stSlider > label p,
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"],
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p,
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"] span {
+    color: #FFFFFF !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    opacity: 1 !important;
+}
+
+/* ── Section heading labels → white ── */
 [data-testid="stSidebar"] .sb-sec-lbl,
 [data-testid="stSidebar"] .sb-sec-lbl *,
-[data-testid="stSidebar"] .sb-sec-lbl span,
-[data-testid="stSidebar"] .sb-sec-lbl div {
+[data-testid="stSidebar"] span.sb-sec-lbl {
     color: #FFFFFF !important;
     font-size: 0.65rem !important;
     font-weight: 800 !important;
@@ -94,18 +111,7 @@ html, body, [class*="css"], .stApp {
     opacity: 1 !important;
 }
 
-/* Input & select labels — bright white, clearly readable */
-[data-testid="stSidebar"] label,
-[data-testid="stSidebar"] label p,
-[data-testid="stSidebar"] .stNumberInput label,
-[data-testid="stSidebar"] .stSelectbox label {
-    color: #FFFFFF !important;
-    font-size: 0.72rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.09em !important;
-    text-transform: uppercase !important;
-    opacity: 1 !important;
-}
+/* Input label styles defined above */
 
 /* Number input box */
 [data-testid="stSidebar"] input[type="number"],
@@ -197,18 +203,7 @@ html, body, [class*="css"], .stApp {
     box-shadow: 0 8px 28px rgba(0,188,212,0.55) !important;
 }
 
-/* Slider label & value */
-[data-testid="stSidebar"] [data-testid="stSlider"] label,
-[data-testid="stSidebar"] [data-testid="stSlider"] label p {
-    color: #FFFFFF !important;
-    font-size: 0.72rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.09em !important;
-    text-transform: uppercase !important;
-}
-[data-testid="stSidebar"] [data-testid="stSlider"] p {
-    color: #A0BDD4 !important;
-}
+/* Slider label styles defined above */
 
 /* ══ CARDS ══ */
 .card {
