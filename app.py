@@ -29,7 +29,7 @@ model = load_model()
 # ════════════════════════════════════════════════════════════════════
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap');
 
 :root {
     --navy:     #0D1B2A;
@@ -54,7 +54,7 @@ st.markdown("""
 }
 
 html, body, [class*="css"], .stApp {
-    font-family: 'Inter', sans-serif !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
     background: var(--offwhite) !important;
     color: var(--text) !important;
 }
@@ -148,7 +148,7 @@ html, body, [class*="css"], .stApp {
     background: var(--cyan);
 }
 .hero-title {
-    font-family: 'Syne', sans-serif !important; font-size: 2.6rem;
+    font-family: 'DM Serif Display', serif !important; font-size: 2.6rem;
     font-weight: 800; color: var(--white); line-height: 1.15;
     margin: 0 0 0.6rem; letter-spacing: -0.02em;
 }
@@ -169,13 +169,13 @@ html, body, [class*="css"], .stApp {
     box-shadow: var(--sh); border-top: 3px solid var(--cyan);
 }
 .kpi-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--g600); margin-bottom: 0.35rem; }
-.kpi-val   { font-size: 1.55rem; font-weight: 800; color: var(--navy); font-family: 'Syne', sans-serif; }
+.kpi-val   { font-size: 1.55rem; font-weight: 800; color: var(--navy); font-family: 'DM Serif Display', serif; }
 .kpi-sub   { font-size: 0.7rem; color: var(--g600); margin-top: 0.1rem; }
 
 /* ══ PRICE CARD ══ */
 .price-hero  { text-align: center; padding: 1.2rem 1rem 1rem; }
 .price-eyebrow { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cyan); margin-bottom: 0.4rem; }
-.price-main { font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; color: var(--white); line-height: 1; margin-bottom: 0.3rem; }
+.price-main { font-family: 'DM Serif Display', serif; font-size: 3rem; font-weight: 800; color: var(--white); line-height: 1; margin-bottom: 0.3rem; }
 .price-main span { color: var(--cyan); }
 .price-range { font-size: 0.78rem; color: #8BAEC8; margin-bottom: 1rem; }
 .price-divider { height: 1px; background: rgba(0,188,212,0.2); margin: 0.8rem 0; }
@@ -185,7 +185,7 @@ html, body, [class*="css"], .stApp {
 
 /* ══ SECTION TITLE ══ */
 .sec-title {
-    font-family: 'Syne', sans-serif; font-size: 1.12rem; font-weight: 800;
+    font-family: 'DM Serif Display', serif; font-size: 1.12rem; font-weight: 800;
     color: var(--navy); letter-spacing: -0.01em;
     display: flex; align-items: center; gap: 8px; margin-bottom: 1.2rem;
 }
@@ -217,13 +217,13 @@ html, body, [class*="css"], .stApp {
 .badge-down { background: rgba(255,82,82,0.12); color: #D32F2F; border-radius: 4px; padding: 2px 7px; font-weight: 700; font-size: 0.7rem; }
 
 /* ══ SIDEBAR CUSTOM ELEMENTS ══ */
-.sb-logo { font-family: 'Syne', sans-serif; font-size: 1.55rem; font-weight: 800; color: var(--white) !important; letter-spacing: -0.02em; padding: 1.4rem 1.2rem 0.1rem; }
+.sb-logo { font-family: 'DM Serif Display', serif; font-size: 1.55rem; font-weight: 800; color: var(--white) !important; letter-spacing: -0.02em; padding: 1.4rem 1.2rem 0.1rem; }
 .sb-logo span { color: var(--cyan) !important; }
 .sb-tag  { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #4A7A9B !important; padding: 0 1.2rem 1.2rem; }
 .sb-sec  { border-top: 1px solid rgba(0,188,212,0.15); margin: 0.8rem 0 0.2rem; padding: 0.6rem 0 0; }
 .sb-sec-lbl { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cyan) !important; margin-bottom: 0.6rem; }
 .sb-stat { background: rgba(0,188,212,0.08); border: 1px solid rgba(0,188,212,0.2); border-radius: 10px; padding: 0.8rem; margin-bottom: 0.8rem; }
-.sb-stat-val { font-size: 1.4rem; font-weight: 800; color: var(--white) !important; font-family: 'Syne', sans-serif; }
+.sb-stat-val { font-size: 1.4rem; font-weight: 800; color: var(--white) !important; font-family: 'DM Serif Display', serif; }
 .sb-stat-lbl { font-size: 0.65rem; color: #4A7A9B !important; letter-spacing: 0.08em; }
 
 /* ══ GALLERY ══ */
@@ -262,7 +262,7 @@ plt.rcParams.update({
     "grid.linestyle":   "-",
     "grid.alpha":       0.8,
     "text.color":       "#1A2744",
-    "font.family":      "sans-serif",
+    "font.family":      "DejaVu Sans",
     "figure.dpi":       120,
 })
 
@@ -411,7 +411,7 @@ if predict_clicked:
             </div>
             <div style="margin-top:1.2rem;">
               <div style="font-size:0.7rem;color:#4A7A9B;letter-spacing:0.08em;">PRICE PER SQFT</div>
-              <div style="font-size:1.6rem;font-weight:800;color:#F0F4F8;font-family:Syne,sans-serif;">${price/area:,.0f}</div>
+              <div style="font-size:1.6rem;font-weight:800;color:#F0F4F8;font-family:'DM Serif Display',serif;">${price/area:,.0f}</div>
             </div>
           </div>
         </div>
