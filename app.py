@@ -605,187 +605,410 @@ if predict_clicked:
 
 
 # ════════════════════════════════════════════════════════════════════
-#  PROPERTY SHOWCASE — Filterable Listing Cards
+#  PROPERTY SHOWCASE — Filterable Listing Cards + View Details Modal
 # ════════════════════════════════════════════════════════════════════
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 st.markdown('<div class="sec-title">🏡 Property Showcase</div>', unsafe_allow_html=True)
 
 st.markdown("""
 <style>
-.listing-card{background:var(--white);border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(13,27,42,0.10);border:1px solid var(--g100);transition:transform 0.22s ease,box-shadow 0.22s ease;}
-.listing-card:hover{transform:translateY(-4px);box-shadow:0 12px 36px rgba(13,27,42,0.16);}
-.listing-img-wrap{position:relative;overflow:hidden;height:200px;}
-.listing-img-wrap img{width:100%;height:200px;object-fit:cover;display:block;}
-.listing-badge{position:absolute;top:12px;left:12px;background:var(--navy);color:#00BCD4!important;font-size:0.6rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;border-radius:6px;padding:4px 10px;}
-.listing-price-tag{position:absolute;bottom:12px;right:12px;background:rgba(13,27,42,0.88);color:var(--white)!important;font-family:'DM Serif Display',serif;font-size:1.05rem;font-weight:700;border-radius:8px;padding:5px 12px;}
-.listing-body{padding:1rem 1.1rem 1.2rem;}
-.listing-title{font-size:0.95rem;font-weight:700;color:var(--navy);margin-bottom:0.25rem;}
-.listing-location{font-size:0.72rem;color:var(--g600);margin-bottom:0.7rem;}
-.listing-stats{display:flex;gap:0.6rem;margin-bottom:0.9rem;flex-wrap:wrap;}
-.listing-stat{background:var(--offwhite);border-radius:6px;padding:4px 9px;font-size:0.68rem;font-weight:600;color:var(--g600);}
-.listing-btn{display:block;width:100%;text-align:center;background:linear-gradient(135deg,#0077B6,#00BCD4);color:var(--white)!important;font-size:0.75rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;border-radius:8px;padding:0.5rem;}
-.nb-card{background:var(--white);border:1px solid var(--g100);border-radius:12px;padding:0.8rem 1rem;box-shadow:var(--sh);display:flex;align-items:center;gap:0.9rem;margin-bottom:0.55rem;}
-.nb-icon{font-size:1.4rem;}
-.nb-info{flex:1;}
-.nb-name{font-size:0.76rem;font-weight:700;color:var(--navy);margin-bottom:0.25rem;}
-.nb-bar-wrap{height:6px;background:var(--g100);border-radius:50px;overflow:hidden;}
-.nb-bar{height:100%;border-radius:50px;}
-.nb-score{font-size:0.72rem;font-weight:700;min-width:28px;text-align:right;}
-.comp-pin{display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;background:var(--offwhite);border-radius:10px;margin-bottom:0.45rem;}
-.pin-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.pin-label{font-size:0.76rem;font-weight:600;color:var(--navy);flex:1;}
-.pin-price{font-size:0.76rem;font-weight:700;color:var(--g600);}
+/* ── Filter bar ── */
+div[data-testid="stHorizontalBlock"] .filter-btn-active > button {
+    background: #0D1B2A !important;
+    color: #00BCD4 !important;
+    border: 2px solid #00BCD4 !important;
+    border-radius: 50px !important;
+}
+div[data-testid="stHorizontalBlock"] .filter-btn-inactive > button {
+    background: #FFFFFF !important;
+    color: #1A2744 !important;
+    border: 1.5px solid #E3EAF2 !important;
+    border-radius: 50px !important;
+}
+div[data-testid="stHorizontalBlock"] button {
+    width: 100% !important;
+    font-size: 0.78rem !important;
+    font-weight: 700 !important;
+    padding: 0.38rem 0.5rem !important;
+    transition: all 0.2s !important;
+}
+div[data-testid="stHorizontalBlock"] button:hover {
+    border-color: #00BCD4 !important;
+    color: #00BCD4 !important;
+}
+
+/* ── Listing card ── */
+.lcard {
+    background: #FFFFFF;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(13,27,42,0.09);
+    border: 1px solid #E3EAF2;
+    transition: transform 0.22s, box-shadow 0.22s;
+    margin-bottom: 1rem;
+}
+.lcard:hover { transform: translateY(-4px); box-shadow: 0 14px 40px rgba(13,27,42,0.15); }
+.lcard-imgwrap { position: relative; height: 200px; overflow: hidden; }
+.lcard-imgwrap img { width:100%; height:200px; object-fit:cover; display:block; }
+.lcard-badge {
+    position: absolute; top: 12px; left: 12px;
+    background: #0D1B2A; color: #00BCD4 !important;
+    font-size: 0.58rem; font-weight: 800; letter-spacing: 0.16em;
+    text-transform: uppercase; border-radius: 6px; padding: 4px 10px;
+}
+.lcard-price {
+    position: absolute; bottom: 12px; right: 12px;
+    background: rgba(13,27,42,0.90); color: #FFFFFF !important;
+    font-family: 'DM Serif Display', serif; font-size: 1.05rem; font-weight: 700;
+    border-radius: 8px; padding: 5px 13px; backdrop-filter: blur(6px);
+}
+.lcard-body { padding: 1rem 1.2rem 1.1rem; }
+.lcard-title { font-size: 1rem; font-weight: 700; color: #0D1B2A; margin-bottom: 0.2rem; }
+.lcard-loc   { font-size: 0.72rem; color: #546E7A; margin-bottom: 0.65rem; }
+.lcard-stats { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom: 0.55rem; }
+.lcard-stat  { background: #F0F4F8; border-radius: 6px; padding: 3px 9px; font-size: 0.67rem; font-weight: 600; color: #37474F; }
+.lcard-tag   { display:inline-block; background: rgba(0,188,212,0.10); border: 1px solid rgba(0,188,212,0.4); color: #0097A7; border-radius: 6px; padding: 3px 9px; font-size: 0.67rem; font-weight: 700; margin-bottom: 0.75rem; }
+
+/* ── View Details modal panel ── */
+.detail-panel {
+    background: linear-gradient(135deg, #0D1B2A, #1A3050);
+    border-radius: 16px; padding: 1.4rem 1.6rem;
+    border: 1px solid rgba(0,188,212,0.25);
+    box-shadow: 0 12px 48px rgba(13,27,42,0.25);
+    color: #F0F4F8;
+}
+.detail-panel h3 { font-family:'DM Serif Display',serif; font-size:1.3rem; color:#FFFFFF; margin:0 0 0.3rem; }
+.detail-panel .dp-price { font-family:'DM Serif Display',serif; font-size:2rem; color:#00BCD4; font-weight:700; margin:0.2rem 0 0.8rem; }
+.detail-row { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.8rem; }
+.detail-pill { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:8px; padding:0.4rem 0.8rem; font-size:0.76rem; font-weight:600; color:#CBD8E8; }
+.detail-feature { display:flex; align-items:center; gap:6px; font-size:0.78rem; color:#8BAEC8; margin-bottom:0.35rem; }
+.detail-feature span.dot { width:7px; height:7px; border-radius:50%; background:#00BCD4; display:inline-block; }
+.detail-section-lbl { font-size:0.65rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:#4A7A9B; margin:0.8rem 0 0.4rem; }
+.close-btn-wrap button {
+    background: rgba(255,82,82,0.15) !important;
+    border: 1px solid rgba(255,82,82,0.4) !important;
+    color: #FF5252 !important;
+    border-radius: 8px !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+}
+
+/* ── Neighborhood scores ── */
+.nb-card2 { background:#FFFFFF; border:1px solid #E3EAF2; border-radius:12px; padding:0.75rem 1rem; display:flex; align-items:center; gap:0.8rem; margin-bottom:0.5rem; box-shadow:0 2px 8px rgba(13,27,42,0.06); }
+.nb-icon2 { font-size:1.3rem; }
+.nb-info2 { flex:1; }
+.nb-name2 { font-size:0.75rem; font-weight:700; color:#0D1B2A; margin-bottom:0.22rem; }
+.nb-barw  { height:5px; background:#E3EAF2; border-radius:50px; overflow:hidden; }
+.nb-barf  { height:100%; border-radius:50px; }
+.nb-sc    { font-size:0.72rem; font-weight:800; min-width:26px; text-align:right; }
+
+/* ── Comparable pins ── */
+.comp2 { display:flex; align-items:center; gap:0.6rem; padding:0.48rem 0.75rem; background:#F0F4F8; border-radius:10px; margin-bottom:0.4rem; }
+.comp2-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+.comp2-lbl { font-size:0.75rem; font-weight:600; color:#0D1B2A; flex:1; }
+.comp2-p   { font-size:0.75rem; font-weight:700; color:#546E7A; }
 </style>
 """, unsafe_allow_html=True)
 
-LISTINGS = {
-    "All": [
-        {"img":"https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=700","badge":"MODERN","title":"Skyline Residency","loc":"Kalawad Road, Rajkot","price":"₹85 L","beds":3,"baths":2,"sqft":1850,"tag":"Ready to Move"},
-        {"img":"https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=700","badge":"LUXURY","title":"Imperial Heights","loc":"Race Course, Rajkot","price":"₹1.8 Cr","beds":4,"baths":3,"sqft":3200,"tag":"Premium"},
-        {"img":"https://images.unsplash.com/photo-1507089947368-19c1da9775ae?w=700","badge":"FAMILY","title":"Green Valley Home","loc":"Mavdi, Rajkot","price":"₹62 L","beds":3,"baths":2,"sqft":1500,"tag":"New Launch"},
-        {"img":"https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=700","badge":"VILLA","title":"Casa Del Sol","loc":"150 Ft Ring Road, Rajkot","price":"₹2.4 Cr","beds":5,"baths":4,"sqft":4200,"tag":"Gated"},
-        {"img":"https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=700","badge":"APARTMENT","title":"Metro View Flat","loc":"Yagnik Road, Rajkot","price":"₹45 L","beds":2,"baths":1,"sqft":980,"tag":"Ready to Move"},
-        {"img":"https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=700","badge":"BUNGALOW","title":"The Heritage House","loc":"Kotecha Chowk, Rajkot","price":"₹1.1 Cr","beds":4,"baths":3,"sqft":2800,"tag":"Resale"},
-    ]
-}
-LISTINGS["Modern"]    = [l for l in LISTINGS["All"] if l["badge"]=="MODERN"]
-LISTINGS["Luxury"]    = [l for l in LISTINGS["All"] if l["badge"] in ("LUXURY","VILLA")]
-LISTINGS["Family"]    = [l for l in LISTINGS["All"] if l["badge"] in ("FAMILY","BUNGALOW")]
-LISTINGS["Apartment"] = [l for l in LISTINGS["All"] if l["badge"]=="APARTMENT"]
+# ── Listing data ──────────────────────────────────────────────────────
+LISTINGS_ALL = [
+    {
+        "img":"https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=700",
+        "badge":"MODERN","cat":"Modern","title":"Skyline Residency",
+        "loc":"Kalawad Road, Rajkot","price":"₹85 L","price_num":8500000,
+        "beds":3,"baths":2,"sqft":1850,"tag":"Ready to Move",
+        "desc":"A sleek contemporary home with open floor plan, Italian marble flooring, modular kitchen, and landscaped garden. Located minutes from Kalawad Road with excellent connectivity.",
+        "features":["Modular Kitchen","Solar Panels","CCTV Security","Garden","2 Car Parking","24/7 Water Supply"],
+        "emi":"₹54,200/mo","possession":"Ready","age":"2 years","floors":"G+2",
+    },
+    {
+        "img":"https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=700",
+        "badge":"LUXURY","cat":"Luxury","title":"Imperial Heights",
+        "loc":"Race Course, Rajkot","price":"₹1.8 Cr","price_num":18000000,
+        "beds":4,"baths":3,"sqft":3200,"tag":"Premium",
+        "desc":"Ultra-luxury villa in the heart of Race Course area. Features a private pool, home theatre, smart home automation, imported fittings, and a rooftop lounge with panoramic city views.",
+        "features":["Private Pool","Home Theatre","Smart Home","Imported Fittings","Rooftop Lounge","Club Membership"],
+        "emi":"₹1.14 L/mo","possession":"Ready","age":"1 year","floors":"G+3",
+    },
+    {
+        "img":"https://images.unsplash.com/photo-1507089947368-19c1da9775ae?w=700",
+        "badge":"FAMILY","cat":"Family","title":"Green Valley Home",
+        "loc":"Mavdi, Rajkot","price":"₹62 L","price_num":6200000,
+        "beds":3,"baths":2,"sqft":1500,"tag":"New Launch",
+        "desc":"Perfectly designed for families in a quiet residential colony. Features a children's play area, community hall, vastu-compliant design, and excellent school proximity.",
+        "features":["Children's Play Area","Community Hall","Vastu Design","School Nearby","Park View","Power Backup"],
+        "emi":"₹39,500/mo","possession":"Dec 2025","age":"New","floors":"G+1",
+    },
+    {
+        "img":"https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=700",
+        "badge":"VILLA","cat":"Luxury","title":"Casa Del Sol",
+        "loc":"150 Ft Ring Road, Rajkot","price":"₹2.4 Cr","price_num":24000000,
+        "beds":5,"baths":4,"sqft":4200,"tag":"Gated Community",
+        "desc":"Sprawling bungalow in a premium gated community on 150 Ft Ring Road. Includes private terrace, jacuzzi, landscaped 2000 sqft garden, servant quarters, and 3-car garage.",
+        "features":["Jacuzzi","3-Car Garage","Servant Quarters","Landscaped Garden","Private Terrace","24/7 Security"],
+        "emi":"₹1.52 L/mo","possession":"Ready","age":"3 years","floors":"G+2",
+    },
+    {
+        "img":"https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=700",
+        "badge":"APARTMENT","cat":"Apartment","title":"Metro View Flat",
+        "loc":"Yagnik Road, Rajkot","price":"₹45 L","price_num":4500000,
+        "beds":2,"baths":1,"sqft":980,"tag":"Ready to Move",
+        "desc":"Well-maintained 2BHK apartment in prime Yagnik Road location. Close to markets, hospitals, and bus stand. Ideal for young professionals and small families.",
+        "features":["Lift","Covered Parking","CCTV","Gym","City View","Maintenance Staff"],
+        "emi":"₹28,600/mo","possession":"Ready","age":"4 years","floors":"4th Floor",
+    },
+    {
+        "img":"https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=700",
+        "badge":"BUNGALOW","cat":"Family","title":"The Heritage House",
+        "loc":"Kotecha Chowk, Rajkot","price":"₹1.1 Cr","price_num":11000000,
+        "beds":4,"baths":3,"sqft":2800,"tag":"Resale",
+        "desc":"A classic Rajkot bungalow with heritage charm and modern upgrades. Solid RCC construction, large airy rooms, covered verandah, and a fully equipped modern kitchen.",
+        "features":["Corner Plot","Large Verandah","RCC Construction","Modern Kitchen","Storage Room","Well Ventilated"],
+        "emi":"₹69,900/mo","possession":"Ready","age":"12 years","floors":"G+1",
+    },
+]
 
-if "gallery_filter" not in st.session_state:
-    st.session_state.gallery_filter = "All"
+FILTER_CATS = {"All": LISTINGS_ALL, "Modern": [], "Luxury": [], "Family": [], "Apartment": []}
+for l in LISTINGS_ALL:
+    FILTER_CATS[l["cat"]].append(l)
 
-f_cols = st.columns(6, gap="small")
-for i, cat in enumerate(["All","Modern","Luxury","Family","Apartment"]):
+# ── Session state ─────────────────────────────────────────────────────
+if "gallery_filter"   not in st.session_state: st.session_state.gallery_filter   = "All"
+if "selected_listing" not in st.session_state: st.session_state.selected_listing = None
+
+# ── Filter bar ────────────────────────────────────────────────────────
+filter_labels = ["All","Modern","Luxury","Family","Apartment"]
+f_cols = st.columns(len(filter_labels), gap="small")
+for i, cat in enumerate(filter_labels):
+    is_active = st.session_state.gallery_filter == cat
+    css_class = "filter-btn-active" if is_active else "filter-btn-inactive"
+    icon = {"All":"🏘","Modern":"🏠","Luxury":"💎","Family":"👨‍👩‍👧","Apartment":"🏢"}.get(cat,"")
     with f_cols[i]:
-        label = f"● {cat}" if st.session_state.gallery_filter == cat else cat
-        if st.button(label, key=f"flt_{cat}"):
-            st.session_state.gallery_filter = cat
+        st.markdown(f'<div class="{css_class}">', unsafe_allow_html=True)
+        if st.button(f"{icon} {cat}", key=f"flt_{cat}", use_container_width=True):
+            st.session_state.gallery_filter   = cat
+            st.session_state.selected_listing = None
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
 
-active_listings = LISTINGS.get(st.session_state.gallery_filter, LISTINGS["All"])
+st.markdown("<br>", unsafe_allow_html=True)
+
+# ── Show detail panel if a listing is selected ───────────────────────
+if st.session_state.selected_listing is not None:
+    l = st.session_state.selected_listing
+    st.markdown(f"""
+    <div class="detail-panel">
+      <h3>{l['title']}</h3>
+      <div class="dp-price">{l['price']}</div>
+      <div class="detail-row">
+        <span class="detail-pill">🛏 {l['beds']} Beds</span>
+        <span class="detail-pill">🚿 {l['baths']} Baths</span>
+        <span class="detail-pill">📐 {l['sqft']:,} sqft</span>
+        <span class="detail-pill">📍 {l['loc']}</span>
+        <span class="detail-pill">🏗 {l['floors']}</span>
+        <span class="detail-pill">🏷 {l['tag']}</span>
+      </div>
+      <div class="detail-section-lbl">About this property</div>
+      <p style="font-size:0.84rem;color:#8BAEC8;line-height:1.65;margin:0 0 0.8rem;">{l['desc']}</p>
+      <div class="detail-section-lbl">Key Features</div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.9rem;">
+        {"".join(f'<span class="detail-pill">{f}</span>' for f in l["features"])}
+      </div>
+      <div class="detail-row" style="margin-bottom:0;">
+        <span class="detail-pill">💰 EMI {l['emi']}</span>
+        <span class="detail-pill">📅 Possession: {l['possession']}</span>
+        <span class="detail-pill">🏚 Age: {l['age']}</span>
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+    col_close, _ = st.columns([2, 8])
+    with col_close:
+        st.markdown('<div class="close-btn-wrap">', unsafe_allow_html=True)
+        if st.button("✕  Close Details", key="close_detail"):
+            st.session_state.selected_listing = None
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+
+# ── Render cards ──────────────────────────────────────────────────────
+active_listings = FILTER_CATS.get(st.session_state.gallery_filter, LISTINGS_ALL)
 for row_start in range(0, len(active_listings), 3):
     row_items = active_listings[row_start:row_start+3]
     cols = st.columns(len(row_items), gap="medium")
     for col, l in zip(cols, row_items):
         with col:
             st.markdown(f"""
-            <div class="listing-card">
-              <div class="listing-img-wrap">
+            <div class="lcard">
+              <div class="lcard-imgwrap">
                 <img src="{l['img']}" alt="{l['title']}"/>
-                <div class="listing-badge">{l['badge']}</div>
-                <div class="listing-price-tag">{l['price']}</div>
+                <div class="lcard-badge">{l['badge']}</div>
+                <div class="lcard-price">{l['price']}</div>
               </div>
-              <div class="listing-body">
-                <div class="listing-title">{l['title']}</div>
-                <div class="listing-location">📍 {l['loc']}</div>
-                <div class="listing-stats">
-                  <span class="listing-stat">🛏 {l['beds']} Beds</span>
-                  <span class="listing-stat">🚿 {l['baths']} Baths</span>
-                  <span class="listing-stat">📐 {l['sqft']:,} sqft</span>
-                  <span class="listing-stat" style="color:#0097A7;background:rgba(0,188,212,0.1);">{l['tag']}</span>
+              <div class="lcard-body">
+                <div class="lcard-title">{l['title']}</div>
+                <div class="lcard-loc">📍 {l['loc']}</div>
+                <div class="lcard-stats">
+                  <span class="lcard-stat">🛏 {l['beds']} Beds</span>
+                  <span class="lcard-stat">🚿 {l['baths']} Baths</span>
+                  <span class="lcard-stat">📐 {l['sqft']:,} sqft</span>
                 </div>
-                <div class="listing-btn">View Details →</div>
+                <div class="lcard-tag">{l['tag']}</div>
               </div>
             </div>
             """, unsafe_allow_html=True)
+            if st.button(f"View Details  →", key=f"view_{l['title'].replace(' ','_')}", use_container_width=True):
+                st.session_state.selected_listing = l
+                st.rerun()
 
 # ════════════════════════════════════════════════════════════════════
-#  LOCATION INTELLIGENCE — Folium Map + Neighborhood Scores
+#  LOCATION INTELLIGENCE — pydeck Map + Location Search + Nb Scores
 # ════════════════════════════════════════════════════════════════════
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
-st.markdown('<div class="sec-title">📍 Location Intelligence — Rajkot, Gujarat</div>', unsafe_allow_html=True)
+st.markdown('<div class="sec-title">📍 Location Intelligence</div>', unsafe_allow_html=True)
 
-try:
-    import folium
-    from streamlit_folium import st_folium
+# ── Location search ───────────────────────────────────────────────────
+CITY_LOCATIONS = {
+    "Rajkot, Gujarat":       (22.3039, 70.8022),
+    "Ahmedabad, Gujarat":    (23.0225, 72.5714),
+    "Surat, Gujarat":        (21.1702, 72.8311),
+    "Vadodara, Gujarat":     (22.3072, 73.1812),
+    "Gandhinagar, Gujarat":  (23.2156, 72.6369),
+    "Bhavnagar, Gujarat":    (21.7645, 72.1519),
+    "Jamnagar, Gujarat":     (22.4707, 70.0577),
+    "Junagadh, Gujarat":     (21.5222, 70.4579),
+    "Mumbai, Maharashtra":   (19.0760, 72.8777),
+    "Pune, Maharashtra":     (18.5204, 73.8567),
+    "Delhi":                 (28.6139, 77.2090),
+    "Bangalore, Karnataka":  (12.9716, 77.5946),
+    "Chennai, Tamil Nadu":   (13.0827, 80.2707),
+    "Hyderabad, Telangana":  (17.3850, 78.4867),
+    "Kolkata, West Bengal":  (22.5726, 88.3639),
+    "Jaipur, Rajasthan":     (26.9124, 75.7873),
+}
 
-    map_col, nb_col = st.columns([3, 2], gap="large")
+search_col, _ = st.columns([3, 5])
+with search_col:
+    selected_city = st.selectbox(
+        "🔍 Search / Select Location",
+        options=list(CITY_LOCATIONS.keys()),
+        index=0,
+    )
 
-    with map_col:
-        m = folium.Map(location=[22.3039, 70.8022], zoom_start=13, tiles="CartoDB positron")
+map_lat, map_lon = CITY_LOCATIONS[selected_city]
 
-        price_for_map = model.predict(input_data)[0]
-        popup_html = f"""
-        <div style="font-family:sans-serif;min-width:180px;padding:4px">
-          <div style="font-size:0.68rem;font-weight:700;color:#546E7A;letter-spacing:0.1em;text-transform:uppercase;">Your Property</div>
-          <div style="font-size:1.2rem;font-weight:800;color:#0D1B2A;">${price_for_map:,.0f}</div>
-          <div style="font-size:0.73rem;color:#546E7A;margin-top:4px">📐 {area:,} sqft &nbsp;|&nbsp; 🛏 {bedrooms} beds</div>
-          <div style="font-size:0.7rem;color:#0097A7;margin-top:4px">📍 Rajkot, Gujarat</div>
-        </div>"""
-        folium.Marker(
-            location=[22.3039, 70.8022],
-            popup=folium.Popup(popup_html, max_width=220),
-            tooltip="🏠 Your Property — click for details",
-            icon=folium.Icon(color="darkblue", icon="home", prefix="fa"),
-        ).add_to(m)
+map_col, nb_col = st.columns([3, 2], gap="large")
 
-        folium.Circle(
-            location=[22.3039, 70.8022], radius=800,
-            color="#00BCD4", fill=True, fill_color="#00BCD4", fill_opacity=0.07,
-            tooltip="Preferred Area Zone (800m radius)",
-        ).add_to(m)
+with map_col:
+    import pydeck as pdk
 
-        comparables = [
-            ([22.3119, 70.7952], "Imperial Heights",  "₹1.8 Cr", "darkred"),
-            ([22.2989, 70.8132], "Green Valley Home",  "₹62 L",   "green"),
-            ([22.3209, 70.8062], "Casa Del Sol",       "₹2.4 Cr", "purple"),
-            ([22.2899, 70.7922], "Metro View Flat",    "₹45 L",   "orange"),
-        ]
-        for loc, name, ptag, color in comparables:
-            folium.Marker(
-                location=loc, tooltip=f"{name} — {ptag}",
-                popup=folium.Popup(f"<b>{name}</b><br>{ptag}", max_width=160),
-                icon=folium.Icon(color=color, icon="building", prefix="fa"),
-            ).add_to(m)
+    # Comparable offsets relative to chosen city
+    COMP_OFFSETS = [
+        (0.008,  -0.008, "Imperial Heights",  "₹1.8 Cr", [220, 38, 38]),
+        (-0.005,  0.011, "Green Valley Home", "₹62 L",   [46, 160, 67]),
+        (0.018,   0.006, "Casa Del Sol",      "₹2.4 Cr", [106, 77, 255]),
+        (-0.010, -0.013, "Metro View Flat",   "₹45 L",   [230, 81, 0]),
+    ]
+    AMENITY_OFFSETS = [
+        (0.004,   0.008, "🏥 Hospital",   [220, 50, 50]),
+        (-0.003, -0.006, "🏫 School",     [21, 101, 192]),
+        (0.002,   0.016, "🛒 Market",     [0, 150, 100]),
+        (-0.007,  0.004, "🚌 Bus Stand",  [100, 100, 200]),
+    ]
 
-        amenities = [
-            ([22.3080, 70.8100], "🏥 Rajkot Civil Hospital", "hospital",       "red"),
-            ([22.3010, 70.7960], "🏫 MK High School",         "graduation-cap", "cadetblue"),
-            ([22.3060, 70.8180], "🛒 Reliance Smart Bazaar",  "shopping-cart",  "green"),
-            ([22.2970, 70.8050], "🚌 Rajkot Bus Stand",       "bus",            "darkblue"),
-        ]
-        for loc, name, icon_n, color in amenities:
-            folium.Marker(location=loc, tooltip=name,
-                          icon=folium.Icon(color=color, icon=icon_n, prefix="fa")).add_to(m)
+    points = [{
+        "lat": map_lat, "lon": map_lon,
+        "name": f"🏠 Your Property  ${model.predict(input_data)[0]:,.0f}",
+        "color": [13, 27, 42], "size": 320,
+    }]
+    for dlat, dlon, name, price_tag, col in COMP_OFFSETS:
+        points.append({"lat": map_lat+dlat, "lon": map_lon+dlon,
+                        "name": f"{name}  {price_tag}", "color": col, "size": 200})
+    for dlat, dlon, name, col in AMENITY_OFFSETS:
+        points.append({"lat": map_lat+dlat, "lon": map_lon+dlon,
+                        "name": name, "color": col, "size": 150})
 
-        st_folium(m, width=None, height=440, returned_objects=[])
+    points_df = pd.DataFrame(points)
 
-    with nb_col:
-        st.markdown('<div style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#546E7A;margin-bottom:0.9rem;">Neighborhood Scores</div>', unsafe_allow_html=True)
-        nb_items = [
-            ("🏫", "Schools & Education", 88, "#1565C0"),
-            ("🏥", "Healthcare",          75, "#00C853"),
-            ("🛒", "Markets & Shopping",  92, "#00BCD4"),
-            ("🚌", "Public Transport",    70, "#FFB300"),
-            ("🌳", "Green Spaces",        60, "#4CAF50"),
-            ("🔒", "Safety Index",        82, "#7C4DFF"),
-        ]
-        for icon, name, score, color in nb_items:
-            st.markdown(f"""
-            <div class="nb-card">
-              <div class="nb-icon">{icon}</div>
-              <div class="nb-info">
-                <div class="nb-name">{name}</div>
-                <div class="nb-bar-wrap">
-                  <div class="nb-bar" style="width:{score}%;background:{color};"></div>
-                </div>
-              </div>
-              <div class="nb-score" style="color:{color};">{score}</div>
-            </div>""", unsafe_allow_html=True)
+    scatter = pdk.Layer(
+        "ScatterplotLayer",
+        data=points_df,
+        get_position=["lon","lat"],
+        get_fill_color="color",
+        get_radius="size",
+        pickable=True,
+        opacity=0.9,
+        stroked=True,
+        get_line_color=[255,255,255],
+        line_width_min_pixels=2,
+    )
+    # Cyan radius circle for your property
+    circle_df = pd.DataFrame([{"lat": map_lat, "lon": map_lon, "radius": 800}])
+    circle = pdk.Layer(
+        "ScatterplotLayer",
+        data=circle_df,
+        get_position=["lon","lat"],
+        get_radius="radius",
+        get_fill_color=[0, 188, 212, 25],
+        get_line_color=[0, 188, 212],
+        stroked=True,
+        line_width_min_pixels=2,
+        pickable=False,
+    )
 
-        st.markdown('<div style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#546E7A;margin:1.1rem 0 0.6rem;">Comparable Properties</div>', unsafe_allow_html=True)
-        for color, name, ptag in [("#C62828","Imperial Heights","₹1.8 Cr"),("#2E7D32","Green Valley Home","₹62 L"),("#6A1B9A","Casa Del Sol","₹2.4 Cr"),("#E65100","Metro View Flat","₹45 L")]:
-            st.markdown(f"""
-            <div class="comp-pin">
-              <div class="pin-dot" style="background:{color};"></div>
-              <div class="pin-label">{name}</div>
-              <div class="pin-price">{ptag}</div>
-            </div>""", unsafe_allow_html=True)
+    view = pdk.ViewState(latitude=map_lat, longitude=map_lon, zoom=12, pitch=30)
+    deck = pdk.Deck(
+        layers=[circle, scatter],
+        initial_view_state=view,
+        tooltip={"html": "<b>{name}</b>", "style": {"background":"#0D1B2A","color":"#F0F4F8","font-size":"13px","padding":"8px 12px","border-radius":"8px","border":"1px solid #00BCD4"}},
+        map_style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+    )
+    st.pydeck_chart(deck, use_container_width=True, height=440)
 
-except ImportError:
-    st.warning("📦 Install `folium` and `streamlit-folium` for the interactive map:\n```\npip install folium streamlit-folium\n```")
-    st.map(pd.DataFrame({"lat":[22.3039],"lon":[70.8022]}), zoom=14)
+    # Legend
+    st.markdown("""
+    <div style="display:flex;flex-wrap:wrap;gap:0.6rem;margin-top:0.7rem;">
+      <span style="display:flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:600;color:#546E7A;"><span style="width:10px;height:10px;border-radius:50%;background:#0D1B2A;display:inline-block;"></span>Your Property</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:600;color:#546E7A;"><span style="width:10px;height:10px;border-radius:50%;background:#DC2626;display:inline-block;"></span>Comparable</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:600;color:#546E7A;"><span style="width:10px;height:10px;border-radius:50%;background:#1565C0;display:inline-block;"></span>Amenity</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:600;color:#0097A7;"><span style="width:10px;height:10px;border-radius:50%;background:rgba(0,188,212,0.3);border:1px solid #00BCD4;display:inline-block;"></span>Preferred Zone (800m)</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+with nb_col:
+    st.markdown(f'<div style="font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#546E7A;margin-bottom:0.8rem;">📊 {selected_city} — Scores</div>', unsafe_allow_html=True)
+    nb_items = [
+        ("🏫","Schools & Education", 88,"#1565C0"),
+        ("🏥","Healthcare",          75,"#00C853"),
+        ("🛒","Markets & Shopping",  92,"#00BCD4"),
+        ("🚌","Public Transport",    70,"#FFB300"),
+        ("🌳","Green Spaces",        60,"#4CAF50"),
+        ("🔒","Safety Index",        82,"#7C4DFF"),
+    ]
+    for icon, name, score, color in nb_items:
+        st.markdown(f"""
+        <div class="nb-card2">
+          <div class="nb-icon2">{icon}</div>
+          <div class="nb-info2">
+            <div class="nb-name2">{name}</div>
+            <div class="nb-barw"><div class="nb-barf" style="width:{score}%;background:{color};"></div></div>
+          </div>
+          <div class="nb-sc" style="color:{color};">{score}</div>
+        </div>""", unsafe_allow_html=True)
+
+    st.markdown('<div style="font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#546E7A;margin:1rem 0 0.5rem;">Nearby Comparable Properties</div>', unsafe_allow_html=True)
+    for col_hex, name, ptag in [
+        ("#C62828","Imperial Heights","₹1.8 Cr"),
+        ("#2E7D32","Green Valley Home","₹62 L"),
+        ("#6A1B9A","Casa Del Sol","₹2.4 Cr"),
+        ("#E65100","Metro View Flat","₹45 L"),
+    ]:
+        st.markdown(f"""
+        <div class="comp2">
+          <div class="comp2-dot" style="background:{col_hex};"></div>
+          <div class="comp2-lbl">{name}</div>
+          <div class="comp2-p">{ptag}</div>
+        </div>""", unsafe_allow_html=True)
 
 # ════════════════════════════════════════════════════════════════════
 #  FOOTER
