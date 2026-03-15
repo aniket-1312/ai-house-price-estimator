@@ -1688,133 +1688,164 @@ with rp2:
     st.markdown('</div>', unsafe_allow_html=True)
 
     if generate_pdf:
-        try:
-            from reportlab.lib.pagesizes import A4
-            from reportlab.lib import colors
-            from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-            from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
-            from reportlab.lib.units import cm
-            import io, datetime
+        import io, datetime, base64
 
-            buf = io.BytesIO()
-            doc = SimpleDocTemplate(buf, pagesize=A4,
-                                    leftMargin=2*cm, rightMargin=2*cm,
-                                    topMargin=2*cm, bottomMargin=2*cm)
-            styles = getSampleStyleSheet()
-            story  = []
+        # ── Build full HTML report (no external library needed) ──
+        _today     = datetime.date.today().strftime("%d %B %Y")
+        _p         = f"${report_price:,.0f}"
+        _p_low     = f"${report_price*0.92:,.0f}"
+        _p_high    = f"${report_price*1.08:,.0f}"
+        _p_sqft    = f"${report_price/area:,.0f}"
+        _p_5yr     = f"${future_5yr:,.0f}"
+        _p_emi     = f"₹{monthly_emi_rp:,.0f}"
+        _p_rent    = f"₹{report_price*0.004:,.0f}"
+        _p_yield   = f"{(report_price*0.004*12/report_price)*100:.2f}%"
+        _sc        = CITY_SCORES.get("Rajkot, Gujarat", [88,75,92,70,60,82])
 
-            # Title
-            title_style = ParagraphStyle("title", fontName="Helvetica-Bold",
-                fontSize=22, textColor=colors.HexColor("#0D1B2A"), spaceAfter=4)
-            sub_style   = ParagraphStyle("sub",   fontName="Helvetica",
-                fontSize=9,  textColor=colors.HexColor("#546E7A"), spaceAfter=16)
-            label_style = ParagraphStyle("lbl",   fontName="Helvetica-Bold",
-                fontSize=8,  textColor=colors.HexColor("#0097A7"), spaceAfter=4)
-            body_style  = ParagraphStyle("body",  fontName="Helvetica",
-                fontSize=10, textColor=colors.HexColor("#1A2744"), spaceAfter=6)
-
-            story.append(Paragraph("EstateIQ PRO", title_style))
-            story.append(Paragraph(f"AI Property Valuation Report  ·  {datetime.date.today().strftime('%d %B %Y')}", sub_style))
-            story.append(HRFlowable(width="100%", thickness=2, color=colors.HexColor("#00BCD4"), spaceAfter=12))
-
-            story.append(Paragraph("ESTIMATED MARKET VALUE", label_style))
-            price_style = ParagraphStyle("price", fontName="Helvetica-Bold",
-                fontSize=28, textColor=colors.HexColor("#0D1B2A"), spaceAfter=4)
-            story.append(Paragraph(f"${report_price:,.0f}", price_style))
-            story.append(Paragraph(f"Confidence Range: ${report_price*0.92:,.0f} – ${report_price*1.08:,.0f}", body_style))
-            story.append(Spacer(1, 0.4*cm))
-
-            story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#E3EAF2"), spaceAfter=10))
-            story.append(Paragraph("PROPERTY SPECIFICATIONS", label_style))
-            spec_data = [
-                ["Feature", "Value", "Feature", "Value"],
-                ["Area",        f"{area:,} sqft",    "Bedrooms",  str(bedrooms)],
-                ["Bathrooms",   str(bathrooms),       "Stories",   str(stories)],
-                ["Parking",     str(parking),         "Price/sqft",f"${report_price/area:,.0f}"],
-                ["Furnishing",  furnishing,           "A/C",       airconditioning],
-                ["Main Road",   mainroad,             "Pref. Area",prefarea],
-            ]
-            t = Table(spec_data, colWidths=[3.5*cm,3.5*cm,3.5*cm,3.5*cm])
-            t.setStyle(TableStyle([
-                ("BACKGROUND",   (0,0),(3,0), colors.HexColor("#0D1B2A")),
-                ("TEXTCOLOR",    (0,0),(3,0), colors.HexColor("#00BCD4")),
-                ("FONTNAME",     (0,0),(3,0), "Helvetica-Bold"),
-                ("FONTSIZE",     (0,0),(-1,-1), 9),
-                ("BACKGROUND",   (0,1),(-1,-1), colors.HexColor("#F8FAFC")),
-                ("ROWBACKGROUNDS",(0,1),(-1,-1),[colors.HexColor("#F8FAFC"),colors.white]),
-                ("GRID",         (0,0),(-1,-1), 0.5, colors.HexColor("#E3EAF2")),
-                ("FONTNAME",     (0,1),(-1,-1), "Helvetica"),
-                ("ALIGN",        (0,0),(-1,-1), "LEFT"),
-                ("PADDING",      (0,0),(-1,-1), 6),
-            ]))
-            story.append(t)
-            story.append(Spacer(1, 0.4*cm))
-
-            story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#E3EAF2"), spaceAfter=10))
-            story.append(Paragraph("INVESTMENT PROJECTIONS", label_style))
-            inv_data = [
-                ["Metric",            "Value"],
-                ["5-Year Value (7%)", f"${future_5yr:,.0f}"],
-                ["Monthly EMI (20yr)",f"₹{monthly_emi_rp:,.0f}"],
-                ["Est. Monthly Rent", f"₹{report_price*0.004:,.0f}"],
-                ["Gross Rental Yield",f"{(report_price*0.004*12/report_price)*100:.2f}%"],
-            ]
-            t2 = Table(inv_data, colWidths=[8*cm, 6*cm])
-            t2.setStyle(TableStyle([
-                ("BACKGROUND",   (0,0),(1,0), colors.HexColor("#0D1B2A")),
-                ("TEXTCOLOR",    (0,0),(1,0), colors.HexColor("#00BCD4")),
-                ("FONTNAME",     (0,0),(1,0), "Helvetica-Bold"),
-                ("FONTSIZE",     (0,0),(-1,-1), 9),
-                ("ROWBACKGROUNDS",(0,1),(-1,-1),[colors.HexColor("#F8FAFC"),colors.white]),
-                ("GRID",         (0,0),(-1,-1), 0.5, colors.HexColor("#E3EAF2")),
-                ("FONTNAME",     (0,1),(-1,-1), "Helvetica"),
-                ("ALIGN",        (0,0),(-1,-1), "LEFT"),
-                ("PADDING",      (0,0),(-1,-1), 7),
-            ]))
-            story.append(t2)
-            story.append(Spacer(1, 0.5*cm))
-
-            story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#E3EAF2"), spaceAfter=10))
-            story.append(Paragraph("DISCLAIMER", ParagraphStyle("dis", fontName="Helvetica", fontSize=7.5, textColor=colors.HexColor("#90A4AE"), spaceAfter=0)))
-            story.append(Paragraph("This report is generated by an AI/ML model and is intended for informational purposes only. Actual market prices may vary. Consult a certified real estate appraiser for legal valuation.", ParagraphStyle("dis2", fontName="Helvetica", fontSize=7.5, textColor=colors.HexColor("#90A4AE"))))
-
-            doc.build(story)
-            buf.seek(0)
-            st.download_button(
-                label="📄 Click to Download PDF",
-                data=buf,
-                file_name=f"EstateIQ_Valuation_Report.pdf",
-                mime="application/pdf",
-                key="dl_pdf"
+        def spec_row(f1, v1, f2, v2):
+            return (
+                "<tr>"
+                "<td style='background:#f8fafc;padding:8px 12px;font-size:11px;font-weight:600;color:#546e7a;border:1px solid #e3eaf2;'>" + f1 + "</td>"
+                "<td style='padding:8px 12px;font-size:12px;font-weight:700;color:#0d1b2a;border:1px solid #e3eaf2;'>" + v1 + "</td>"
+                "<td style='background:#f8fafc;padding:8px 12px;font-size:11px;font-weight:600;color:#546e7a;border:1px solid #e3eaf2;'>" + f2 + "</td>"
+                "<td style='padding:8px 12px;font-size:12px;font-weight:700;color:#0d1b2a;border:1px solid #e3eaf2;'>" + v2 + "</td>"
+                "</tr>"
             )
-            st.success("✅ PDF ready! Click the button above to download.")
-        except ImportError:
-            st.warning("📦 Install reportlab for PDF export:\n```\npip install reportlab\n```")
 
-    st.markdown("""
-    <div style="margin-top:1.2rem;">
-      <div style="font-size:0.74rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#546E7A;margin-bottom:0.8rem;">Report Includes</div>
-    """, unsafe_allow_html=True)
-    report_items = [
-        ("✅","AI Estimated Market Value + Range"),
-        ("✅","Full Property Specifications"),
-        ("✅","5-Year Investment Projection"),
-        ("✅","EMI Estimate (20yr @ 8.5%)"),
-        ("✅","Estimated Monthly Rental Income"),
-        ("✅","Gross Rental Yield"),
-        ("✅","Neighborhood Scores"),
-        ("✅","Professional Branded Layout"),
-    ]
-    for icon, item in report_items:
-        st.markdown(f'<div style="display:flex;align-items:center;gap:8px;padding:0.3rem 0;font-size:0.8rem;color:#1A2744;border-bottom:1px solid #F0F4F8;"><span style="color:#00A844;font-weight:700;">{icon}</span>{item}</div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+        def inv_row(label, val, color="#0d1b2a"):
+            return (
+                "<tr>"
+                "<td style='padding:8px 14px;font-size:12px;color:#546e7a;border:1px solid #e3eaf2;'>" + label + "</td>"
+                "<td style='padding:8px 14px;font-size:13px;font-weight:800;color:" + color + ";border:1px solid #e3eaf2;'>" + val + "</td>"
+                "</tr>"
+            )
 
-    st.markdown("""
-    <div style="margin-top:1rem;background:rgba(255,179,0,0.07);border:1px solid rgba(255,179,0,0.25);border-radius:10px;padding:0.75rem 1rem;font-size:0.75rem;color:#7A5800;">
-      ⚡ Install <b>reportlab</b> to enable PDF export:<br>
-      <code style="background:rgba(0,0,0,0.06);padding:2px 6px;border-radius:4px;">pip install reportlab</code>
-    </div>
-    """, unsafe_allow_html=True)
+        def nb_row(label, score, color):
+            bar = "<div style='height:6px;background:#e3eaf2;border-radius:4px;margin-top:3px;'><div style='height:6px;width:" + str(score) + "%;background:" + color + ";border-radius:4px;'></div></div>"
+            return (
+                "<tr>"
+                "<td style='padding:7px 12px;font-size:12px;font-weight:600;color:#1a2744;border:1px solid #e3eaf2;width:150px;'>" + label + "</td>"
+                "<td style='padding:7px 12px;border:1px solid #e3eaf2;'>" + bar + "</td>"
+                "<td style='padding:7px 12px;font-size:12px;font-weight:800;color:" + color + ";border:1px solid #e3eaf2;text-align:right;width:40px;'>" + str(score) + "</td>"
+                "</tr>"
+            )
+
+        amenity_str = ", ".join(amenity_tags) if amenity_tags else "N/A"
+
+        html_report = """<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',sans-serif; background:#fff; color:#1a2744; }
+  .page { max-width:780px; margin:0 auto; padding:40px; }
+  .header { background:linear-gradient(135deg,#0d1b2a,#1a3050); padding:32px 40px; border-radius:12px; margin-bottom:28px; position:relative; overflow:hidden; }
+  .header::after { content:''; position:absolute; top:-60px; right:-60px; width:200px; height:200px; background:radial-gradient(circle,rgba(0,188,212,0.25) 0%,transparent 70%); }
+  .logo { font-size:26px; font-weight:800; color:#fff; letter-spacing:-0.02em; }
+  .logo span { color:#00BCD4; }
+  .tagline { font-size:10px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:#4a7a9b; margin-top:4px; }
+  .price-block { background:linear-gradient(135deg,rgba(0,188,212,0.07),rgba(21,101,192,0.07)); border:1.5px solid rgba(0,188,212,0.3); border-radius:12px; padding:22px 28px; text-align:center; margin-bottom:24px; }
+  .price-lbl { font-size:10px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:#0097a7; margin-bottom:6px; }
+  .price-val { font-size:38px; font-weight:800; color:#0d1b2a; }
+  .price-range { font-size:12px; color:#546e7a; margin-top:5px; }
+  .section { margin-bottom:24px; }
+  .section-title { font-size:10px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:#00bcd4; border-bottom:1.5px solid #e3eaf2; padding-bottom:6px; margin-bottom:12px; }
+  table { width:100%; border-collapse:collapse; }
+  .amenity-tag { display:inline-block; background:rgba(0,188,212,0.1); color:#0097a7; border-radius:4px; padding:3px 10px; font-size:10px; font-weight:700; margin:2px 3px 2px 0; }
+  .footer { margin-top:32px; padding-top:16px; border-top:1px solid #e3eaf2; display:flex; justify-content:space-between; align-items:center; }
+  .footer-text { font-size:9px; color:#90a4ae; letter-spacing:0.1em; }
+  .footer-brand { font-size:11px; font-weight:800; color:#0d1b2a; }
+  .footer-brand span { color:#00bcd4; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="logo">Estate<span>IQ</span> PRO</div>
+    <div class="tagline">AI Property Valuation Report &nbsp;&middot;&nbsp; """ + _today + """</div>
+  </div>
+
+  <div class="price-block">
+    <div class="price-lbl">Estimated Market Value</div>
+    <div class="price-val">""" + _p + """</div>
+    <div class="price-range">Confidence Range: """ + _p_low + """ &ndash; """ + _p_high + """</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Property Specifications</div>
+    <table>""" +         spec_row("Area", str(area)+",sqft".replace(",",""), "Bedrooms", str(bedrooms)) +         spec_row("Bathrooms", str(bathrooms), "Stories", str(stories)) +         spec_row("Parking", str(parking), "Price / sqft", _p_sqft) +         spec_row("Furnishing", furnishing, "Air Conditioning", airconditioning) +         spec_row("Main Road", mainroad, "Preferred Area", prefarea) +     """</table>
+    <div style="margin-top:10px;">""" +     "".join('<span class="amenity-tag">' + a + '</span>' for a in amenity_tags) +     """</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Investment Projections</div>
+    <table>""" +         inv_row("5-Year Value (7% p.a.)", _p_5yr, "#00a844") +         inv_row("Monthly EMI (20yr @ 8.5%)", _p_emi, "#0097a7") +         inv_row("Estimated Monthly Rent", _p_rent, "#1a2744") +         inv_row("Gross Rental Yield", _p_yield, "#7c4dff") +     """</table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Neighborhood Scores &mdash; Rajkot</div>
+    <table>""" +         nb_row("Schools & Education", _sc[0], "#1565C0") +         nb_row("Healthcare",          _sc[1], "#00C853") +         nb_row("Markets & Shopping",  _sc[2], "#00BCD4") +         nb_row("Public Transport",    _sc[3], "#FFB300") +         nb_row("Safety Index",        _sc[5], "#7C4DFF") +     """</table>
+  </div>
+
+  <div class="footer">
+    <span class="footer-brand">Estate<span>IQ</span> PRO</span>
+    <span class="footer-text">AI-Powered Valuation &nbsp;&middot;&nbsp; For informational use only &nbsp;&middot;&nbsp; CONFIDENTIAL</span>
+  </div>
+
+</div>
+</body>
+</html>"""
+
+        # ── Convert HTML to downloadable file ──
+        html_bytes = html_report.encode("utf-8")
+        b64 = base64.b64encode(html_bytes).decode()
+
+        # Download as HTML (opens perfectly in browser, printable to PDF)
+        st.download_button(
+            label="📄 Download Report (HTML)",
+            data=html_bytes,
+            file_name="EstateIQ_Valuation_Report.html",
+            mime="text/html",
+            key="dl_html"
+        )
+        st.success("✅ Report ready! Open in browser then press **Cmd+P → Save as PDF** to get a PDF.")
+
+    # ── Report includes checklist ──
+    items_html = ""
+    for item in [
+        "AI Estimated Market Value + Range",
+        "Full Property Specifications",
+        "5-Year Investment Projection",
+        "EMI Estimate (20yr @ 8.5%)",
+        "Estimated Monthly Rental Income",
+        "Gross Rental Yield",
+        "Neighborhood Scores",
+        "Professional Branded Layout",
+    ]:
+        items_html += (
+            '<div style="display:flex;align-items:center;gap:8px;padding:0.35rem 0;'
+            'font-size:0.8rem;color:#1A2744;border-bottom:1px solid #F0F4F8;">'
+            '<span style="color:#00A844;font-weight:700;">&#10003;</span>' + item + '</div>'
+        )
+
+    st.markdown(
+        '<div style="margin-top:1.2rem;">' +
+        '<div style="font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#546E7A;margin-bottom:0.8rem;">Report Includes</div>' +
+        items_html +
+        '</div>',
+        unsafe_allow_html=True
+    )
+    st.markdown(
+        '<div style="margin-top:1rem;background:rgba(0,188,212,0.06);border:1px solid rgba(0,188,212,0.25);'
+        'border-radius:10px;padding:0.75rem 1rem;font-size:0.75rem;color:#006064;">' +
+        '<b>Tip:</b> Download the HTML report and open it in Chrome/Safari, '
+        'then press <b>Cmd+P (Mac) / Ctrl+P (Windows)</b> and choose <b>Save as PDF</b> to get a perfect PDF.' +
+        '</div>',
+        unsafe_allow_html=True
+    )
 
 
 # ════════════════════════════════════════════════════════════════════
