@@ -62,45 +62,139 @@ html, body, [class*="css"], .stApp {
 #MainMenu, footer, header { visibility: hidden; }
 .block-container { padding: 1.5rem 2rem 2rem !important; max-width: 1400px !important; }
 
-/* ══ SIDEBAR ══ */
+/* ══════════════════════════════
+   SIDEBAR — Professional Design
+══════════════════════════════ */
+
+/* Background */
 [data-testid="stSidebar"] {
-    background: linear-gradient(180deg, var(--navy) 0%, var(--navy2) 100%) !important;
-    border-right: none !important;
-    box-shadow: 4px 0 24px rgba(13,27,42,0.3) !important;
+    background: #0D1B2A !important;
+    border-right: 1px solid rgba(0,188,212,0.15) !important;
+    box-shadow: 4px 0 32px rgba(0,0,0,0.35) !important;
 }
-[data-testid="stSidebar"] * { color: #CBD8E8 !important; }
-[data-testid="stSidebar"] label {
-    font-size: 0.68rem !important; font-weight: 600 !important;
-    letter-spacing: 0.1em !important; text-transform: uppercase !important;
-    color: var(--g300) !important;
+
+/* Reset all text to readable light color */
+[data-testid="stSidebar"],
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] span,
+[data-testid="stSidebar"] div {
+    color: #E0EAF4 !important;
 }
+
+/* Input & select labels — bright white, clearly readable */
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] label p,
+[data-testid="stSidebar"] .stNumberInput label,
+[data-testid="stSidebar"] .stSelectbox label {
+    color: #FFFFFF !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.09em !important;
+    text-transform: uppercase !important;
+    opacity: 1 !important;
+}
+
+/* Number input box */
 [data-testid="stSidebar"] input[type="number"],
 [data-testid="stSidebar"] [data-baseweb="input"] input {
-    background: rgba(255,255,255,0.07) !important;
-    border: 1px solid rgba(0,188,212,0.3) !important;
-    border-radius: 8px !important; color: var(--white) !important;
-    font-weight: 500 !important;
+    background: rgba(255,255,255,0.10) !important;
+    border: 1.5px solid rgba(255,255,255,0.18) !important;
+    border-radius: 8px !important;
+    color: #FFFFFF !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
 }
+[data-testid="stSidebar"] input[type="number"]:focus,
+[data-testid="stSidebar"] [data-baseweb="input"] input:focus {
+    border-color: #00BCD4 !important;
+    background: rgba(0,188,212,0.12) !important;
+    box-shadow: 0 0 0 3px rgba(0,188,212,0.15) !important;
+}
+
+/* +/- buttons */
+[data-testid="stSidebar"] [data-baseweb="input"] ~ div button,
+[data-testid="stSidebar"] button[kind="secondary"] {
+    background: rgba(255,255,255,0.10) !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    color: #FFFFFF !important;
+    border-radius: 6px !important;
+}
+
+/* Select box */
 [data-testid="stSidebar"] [data-baseweb="select"] > div {
-    background: rgba(255,255,255,0.07) !important;
-    border: 1px solid rgba(0,188,212,0.3) !important;
-    border-radius: 8px !important; color: var(--white) !important;
+    background: rgba(255,255,255,0.10) !important;
+    border: 1.5px solid rgba(255,255,255,0.18) !important;
+    border-radius: 8px !important;
+    color: #FFFFFF !important;
 }
-[data-testid="stSidebar"] [data-baseweb="select"] svg { fill: var(--cyan) !important; }
-[data-testid="stSidebar"] .stButton > button {
-    background: linear-gradient(135deg, #0077B6, var(--cyan)) !important;
-    color: var(--white) !important; font-weight: 700 !important;
-    font-size: 0.88rem !important; letter-spacing: 0.1em !important;
-    text-transform: uppercase !important; border: none !important;
-    border-radius: 10px !important; padding: 0.75rem 1rem !important;
-    width: 100% !important; cursor: pointer !important;
-    transition: all 0.25s ease !important;
-    box-shadow: 0 4px 18px rgba(0,188,212,0.45) !important;
+[data-testid="stSidebar"] [data-baseweb="select"] > div:focus-within {
+    border-color: #00BCD4 !important;
+    box-shadow: 0 0 0 3px rgba(0,188,212,0.15) !important;
+}
+[data-testid="stSidebar"] [data-baseweb="select"] [data-testid="stMarkdown"] p,
+[data-testid="stSidebar"] [data-baseweb="select"] span,
+[data-testid="stSidebar"] [data-baseweb="select"] div {
+    color: #FFFFFF !important;
+}
+[data-testid="stSidebar"] [data-baseweb="select"] svg {
+    fill: #00BCD4 !important;
+    color: #00BCD4 !important;
+}
+
+/* Dropdown open menu */
+[data-testid="stSidebar"] [data-baseweb="popover"] [role="listbox"],
+[data-testid="stSidebar"] [data-baseweb="menu"] {
+    background: #132338 !important;
+    border: 1px solid rgba(0,188,212,0.25) !important;
+    border-radius: 10px !important;
+}
+[data-testid="stSidebar"] [data-baseweb="menu"] li,
+[data-testid="stSidebar"] [role="option"] {
+    color: #E0EAF4 !important;
+    background: transparent !important;
+}
+[data-testid="stSidebar"] [data-baseweb="menu"] li:hover,
+[data-testid="stSidebar"] [role="option"]:hover {
+    background: rgba(0,188,212,0.15) !important;
+    color: #FFFFFF !important;
+}
+
+/* Predict button */
+[data-testid="stSidebar"] div[data-testid="stButton"] > button,
+[data-testid="stSidebar"] div[data-testid="stButton"] > button:focus,
+[data-testid="stSidebar"] div[data-testid="stButton"] > button:focus:not(:active) {
+    background-color: #0077B6 !important;
+    background-image: linear-gradient(135deg, #0055A4, #00BCD4) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    font-size: 0.88rem !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
+    box-shadow: 0 4px 20px rgba(0,188,212,0.40) !important;
+    padding: 0.75rem 1rem !important;
+    width: 100% !important;
     margin-top: 8px !important;
+    transition: all 0.25s ease !important;
 }
-[data-testid="stSidebar"] .stButton > button:hover {
-    transform: translateY(-2px) scale(1.01) !important;
-    box-shadow: 0 8px 28px rgba(0,188,212,0.6) !important;
+[data-testid="stSidebar"] div[data-testid="stButton"] > button:hover {
+    background-image: linear-gradient(135deg, #003D80, #0097A7) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 28px rgba(0,188,212,0.55) !important;
+}
+
+/* Slider label & value */
+[data-testid="stSidebar"] [data-testid="stSlider"] label,
+[data-testid="stSidebar"] [data-testid="stSlider"] label p {
+    color: #FFFFFF !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.09em !important;
+    text-transform: uppercase !important;
+}
+[data-testid="stSidebar"] [data-testid="stSlider"] p {
+    color: #A0BDD4 !important;
 }
 
 /* ══ CARDS ══ */
@@ -217,14 +311,65 @@ html, body, [class*="css"], .stApp {
 .badge-down { background: rgba(255,82,82,0.12); color: #D32F2F; border-radius: 4px; padding: 2px 7px; font-weight: 700; font-size: 0.7rem; }
 
 /* ══ SIDEBAR CUSTOM ELEMENTS ══ */
-.sb-logo { font-family: 'DM Serif Display', serif; font-size: 1.55rem; font-weight: 800; color: var(--white) !important; letter-spacing: -0.02em; padding: 1.4rem 1.2rem 0.1rem; }
-.sb-logo span { color: var(--cyan) !important; }
-.sb-tag  { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #4A7A9B !important; padding: 0 1.2rem 1.2rem; }
-.sb-sec  { border-top: 1px solid rgba(0,188,212,0.15); margin: 0.8rem 0 0.2rem; padding: 0.6rem 0 0; }
-.sb-sec-lbl { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cyan) !important; margin-bottom: 0.6rem; }
-.sb-stat { background: rgba(0,188,212,0.08); border: 1px solid rgba(0,188,212,0.2); border-radius: 10px; padding: 0.8rem; margin-bottom: 0.8rem; }
-.sb-stat-val { font-size: 1.4rem; font-weight: 800; color: var(--white) !important; font-family: 'DM Serif Display', serif; }
-.sb-stat-lbl { font-size: 0.65rem; color: #4A7A9B !important; letter-spacing: 0.08em; }
+/* ── Sidebar custom elements ── */
+.sb-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem; font-weight: 800;
+    color: #FFFFFF !important;
+    letter-spacing: -0.02em;
+    padding: 1.5rem 1.2rem 0.2rem;
+    display: block;
+}
+.sb-logo span { color: #00BCD4 !important; }
+.sb-logo small { font-size: 0.45em; color: #4A7A9B !important; font-weight: 600; vertical-align: middle; }
+
+.sb-tag {
+    font-size: 0.6rem; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: #4A7A9B !important;
+    padding: 0 1.2rem 1.4rem;
+    display: block;
+}
+
+.sb-stat {
+    background: linear-gradient(135deg, rgba(0,188,212,0.12), rgba(0,188,212,0.06)) !important;
+    border: 1px solid rgba(0,188,212,0.25) !important;
+    border-radius: 12px !important;
+    padding: 1rem 1.1rem !important;
+    margin-bottom: 1rem !important;
+    position: relative;
+    overflow: hidden;
+}
+.sb-stat::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, #00BCD4, transparent);
+}
+.sb-stat-val {
+    font-size: 1.8rem !important; font-weight: 800 !important;
+    color: #FFFFFF !important;
+    font-family: 'DM Serif Display', serif;
+    line-height: 1.1;
+}
+.sb-stat-lbl {
+    font-size: 0.65rem !important; font-weight: 600 !important;
+    color: #7BA8C4 !important;
+    letter-spacing: 0.08em;
+    margin-top: 2px;
+}
+
+.sb-sec {
+    border-top: 1px solid rgba(255,255,255,0.07) !important;
+    margin: 1rem 0 0.4rem !important;
+    padding-top: 0.8rem !important;
+}
+.sb-sec-lbl {
+    font-size: 0.63rem !important; font-weight: 800 !important;
+    letter-spacing: 0.16em !important; text-transform: uppercase !important;
+    color: #00BCD4 !important;
+    margin-bottom: 0.5rem !important;
+    display: flex; align-items: center; gap: 6px;
+}
 
 /* ══ GALLERY ══ */
 .gallery-caption { font-size: 0.75rem; font-weight: 600; color: var(--g600); text-align: center; margin-top: 0.4rem; }
@@ -279,37 +424,53 @@ C_PRP   = "#7C4DFF"
 #  SIDEBAR
 # ════════════════════════════════════════════════════════════════════
 with st.sidebar:
-    st.markdown('<div class="sb-logo">Estate<span>IQ</span> <small style="font-size:0.5em;opacity:0.6">PRO</small></div>', unsafe_allow_html=True)
-    st.markdown('<div class="sb-tag">AI-Powered Valuation Engine</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sb-stat"><div class="sb-stat-val">98.4%</div><div class="sb-stat-lbl">Model Accuracy (R² Score)</div></div>', unsafe_allow_html=True)
-
-    st.markdown('<div class="sb-sec"><div class="sb-sec-lbl">📐 Size & Structure</div></div>', unsafe_allow_html=True)
-    area      = st.number_input("Area (sqft)",      500, 10000, 2000, step=50)
-    bedrooms  = st.number_input("Bedrooms",           1,    10,    3)
-    bathrooms = st.number_input("Bathrooms",          1,     5,    2)
-    stories   = st.number_input("Stories",            1,     4,    2)
-    parking   = st.number_input("Parking Spaces",     0,     5,    1)
-
-    st.markdown('<div class="sb-sec"><div class="sb-sec-lbl">🏡 Amenities</div></div>', unsafe_allow_html=True)
+    # Brand header
+    st.markdown(
+        '<div class="sb-logo">Estate<span>IQ</span><small> PRO</small></div>'
+        '<div class="sb-tag">AI-Powered Valuation Engine</div>',
+        unsafe_allow_html=True
+    )
+    # Accuracy stat
+    st.markdown(
+        '<div class="sb-stat">'
+        '<div class="sb-stat-val">98.4%</div>'
+        '<div class="sb-stat-lbl">Model Accuracy (R² Score)</div>'
+        '</div>',
+        unsafe_allow_html=True
+    )
+    # Size & Structure
+    st.markdown('<div class="sb-sec"><div class="sb-sec-lbl">&#128210; Size &amp; Structure</div></div>', unsafe_allow_html=True)
+    area      = st.number_input("Area (sqft)",    500, 10000, 2000, step=50)
+    bedrooms  = st.number_input("Bedrooms",         1,    10,    3)
+    bathrooms = st.number_input("Bathrooms",        1,     5,    2)
+    stories   = st.number_input("Stories",          1,     4,    2)
+    parking   = st.number_input("Parking Spaces",   0,     5,    1)
+    # Amenities
+    st.markdown('<div class="sb-sec"><div class="sb-sec-lbl">&#127968; Amenities</div></div>', unsafe_allow_html=True)
     mainroad        = st.selectbox("Main Road Access",  ["Yes","No"])
     guestroom       = st.selectbox("Guest Room",        ["Yes","No"])
     basement        = st.selectbox("Basement",          ["Yes","No"])
     airconditioning = st.selectbox("Air Conditioning",  ["Yes","No"])
     prefarea        = st.selectbox("Preferred Area",    ["Yes","No"])
-
-    st.markdown('<div class="sb-sec"><div class="sb-sec-lbl">🛋 Interior</div></div>', unsafe_allow_html=True)
+    # Interior
+    st.markdown('<div class="sb-sec"><div class="sb-sec-lbl">&#128716; Interior</div></div>', unsafe_allow_html=True)
     furnishing = st.selectbox("Furnishing Status", ["Furnished","Semi-Furnished","Unfurnished"])
-
-    st.markdown('<div class="sb-sec"><div class="sb-sec-lbl">⚙️ Analysis Settings</div></div>', unsafe_allow_html=True)
+    # Analysis Settings
+    st.markdown('<div class="sb-sec"><div class="sb-sec-lbl">&#9881; Analysis Settings</div></div>', unsafe_allow_html=True)
     roi_years    = st.slider("ROI Projection (Years)", 1, 20, 10)
     appreciation = st.slider("Annual Appreciation %",  2, 15,  7)
 
-    predict_clicked = st.button("🔍  Analyze & Estimate Price", key="predict_btn")
+    st.markdown("<div style='height:0.4rem'></div>", unsafe_allow_html=True)
+    predict_clicked = st.button("Search  Analyze & Estimate Price", key="predict_btn")
 
-    st.markdown("""
-    <div class="alert-warn" style="margin-top:1rem;">
-        ⚡ Results are ML estimates. Consult a certified appraiser for legal valuations.
-    </div>""", unsafe_allow_html=True)
+    st.markdown(
+        '<div style="margin-top:1rem;background:rgba(255,179,0,0.08);border:1px solid '
+        'rgba(255,179,0,0.2);border-radius:10px;padding:0.75rem 0.9rem;font-size:0.72rem;'
+        'color:#FFD54F;line-height:1.5;">'
+        '⚡ Results are ML estimates. Consult a certified appraiser for legal valuations.'
+        '</div>',
+        unsafe_allow_html=True
+    )
 
 # ════════════════════════════════════════════════════════════════════
 #  BUILD INPUT DATAFRAME
@@ -703,30 +864,7 @@ div[data-testid="stButton"] > button:hover {
     box-shadow: none !important;
 }
 
-/* Sidebar predict button: cyan gradient */
-[data-testid="stSidebar"] div[data-testid="stButton"] > button,
-[data-testid="stSidebar"] div[data-testid="stButton"] > button:focus,
-[data-testid="stSidebar"] div[data-testid="stButton"] > button:focus:not(:active) {
-    background-color: #0077B6 !important;
-    background-image: linear-gradient(135deg, #0077B6, #00BCD4) !important;
-    color: #FFFFFF !important;
-    border: none !important;
-    border-radius: 10px !important;
-    font-weight: 700 !important;
-    font-size: 0.88rem !important;
-    letter-spacing: 0.1em !important;
-    text-transform: uppercase !important;
-    box-shadow: 0 4px 18px rgba(0,188,212,0.45) !important;
-    padding: 0.75rem 1rem !important;
-    margin-top: 8px !important;
-}
-[data-testid="stSidebar"] div[data-testid="stButton"] > button:hover {
-    background-color: #005F8F !important;
-    background-image: linear-gradient(135deg, #005F8F, #0097A7) !important;
-    color: #FFFFFF !important;
-    transform: translateY(-2px) scale(1.01) !important;
-    box-shadow: 0 8px 28px rgba(0,188,212,0.6) !important;
-}
+/* Sidebar button styles defined in SIDEBAR section above */
 
 
 /* ── Listing card ── */
