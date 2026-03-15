@@ -1135,21 +1135,161 @@ st.markdown('<div class="sec-title">🔬 What-If Price Simulator</div>', unsafe_
 
 st.markdown("""
 <style>
-.whatif-card{background:#FFFFFF;border-radius:16px;padding:1.4rem 1.6rem;border:1px solid #E3EAF2;box-shadow:0 4px 20px rgba(13,27,42,0.08);}
-.whatif-result{background:linear-gradient(135deg,#0D1B2A,#1A3050);border-radius:14px;padding:1.4rem 1.8rem;border:1px solid rgba(0,188,212,0.25);text-align:center;}
-.wi-base{font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8BAEC8;margin-bottom:0.3rem;}
-.wi-price{font-family:'DM Serif Display',serif;font-size:2.2rem;font-weight:700;color:#FFFFFF;margin-bottom:0.2rem;}
-.wi-new{font-family:'DM Serif Display',serif;font-size:2.6rem;font-weight:700;color:#00BCD4;margin-bottom:0.2rem;}
-.wi-change-pos{font-size:1rem;font-weight:800;color:#00C853;}
-.wi-change-neg{font-size:1rem;font-weight:800;color:#FF5252;}
-.wi-bar-wrap{height:8px;background:rgba(255,255,255,0.1);border-radius:50px;overflow:hidden;margin:0.8rem 0 0.3rem;}
-.wi-bar-fill{height:100%;border-radius:50px;transition:width 0.4s ease;}
-.impact-row{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid #F0F4F8;font-size:0.82rem;}
-.impact-row:last-child{border-bottom:none;}
-.impact-lbl{font-weight:600;color:#1A2744;}
-.impact-val-pos{font-weight:800;color:#00A844;}
-.impact-val-neg{font-weight:800;color:#D32F2F;}
-.impact-val-neu{font-weight:700;color:#546E7A;}
+/* ══ WHAT-IF & EMI — force light theme on all inputs ══ */
+
+/* Slider label text */
+div[data-testid="stSlider"] label p,
+div[data-testid="stSlider"] label {
+    color: #1A2744 !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+}
+
+/* Slider track */
+div[data-testid="stSlider"] [data-baseweb="slider"] [role="slider"] {
+    background-color: #00BCD4 !important;
+    border-color: #00BCD4 !important;
+}
+
+/* Slider value bubble */
+div[data-testid="stSlider"] div[data-testid="stTickBarMin"],
+div[data-testid="stSlider"] div[data-testid="stTickBarMax"],
+div[data-testid="stSlider"] p {
+    color: #546E7A !important;
+}
+
+/* Number input — light bg, dark text */
+div[data-testid="stNumberInput"] input {
+    background-color: #F8FAFC !important;
+    color: #1A2744 !important;
+    border: 1.5px solid #CBD8E8 !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+}
+div[data-testid="stNumberInput"] label,
+div[data-testid="stNumberInput"] label p {
+    color: #1A2744 !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+}
+
+/* Selectbox — light bg, dark text */
+div[data-testid="stSelectbox"] [data-baseweb="select"] > div {
+    background-color: #F8FAFC !important;
+    border: 1.5px solid #CBD8E8 !important;
+    border-radius: 8px !important;
+    color: #1A2744 !important;
+}
+div[data-testid="stSelectbox"] [data-baseweb="select"] span,
+div[data-testid="stSelectbox"] [data-baseweb="select"] div {
+    color: #1A2744 !important;
+}
+div[data-testid="stSelectbox"] label,
+div[data-testid="stSelectbox"] label p {
+    color: #1A2744 !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+}
+div[data-testid="stSelectbox"] svg {
+    fill: #546E7A !important;
+}
+
+/* Dropdown menu options */
+[data-baseweb="menu"] {
+    background-color: #FFFFFF !important;
+}
+[data-baseweb="menu"] li {
+    color: #1A2744 !important;
+    background-color: #FFFFFF !important;
+}
+[data-baseweb="menu"] li:hover {
+    background-color: #F0F8FF !important;
+    color: #006064 !important;
+}
+
+/* Number input +/- buttons */
+div[data-testid="stNumberInput"] button {
+    background-color: #F0F4F8 !important;
+    color: #1A2744 !important;
+    border: 1px solid #CBD8E8 !important;
+}
+
+/* ══ Card containers ══ */
+.whatif-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 1.4rem 1.6rem;
+    border: 1px solid #E3EAF2;
+    box-shadow: 0 4px 20px rgba(13,27,42,0.08);
+}
+.emi-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 1.5rem 1.8rem;
+    border: 1px solid #E3EAF2;
+    box-shadow: 0 4px 20px rgba(13,27,42,0.08);
+}
+
+/* ══ Section mini-labels ══ */
+.mini-label {
+    font-size: 0.68rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.14em !important;
+    text-transform: uppercase !important;
+    color: #0097A7 !important;
+    margin-bottom: 0.4rem !important;
+    margin-top: 0.6rem !important;
+    display: block !important;
+}
+
+/* ══ What-If result card ══ */
+.whatif-result {
+    background: linear-gradient(135deg,#0D1B2A,#1A3050);
+    border-radius: 14px; padding: 1.6rem 1.8rem;
+    border: 1px solid rgba(0,188,212,0.25); text-align: center;
+}
+.wi-base  { font-size:0.7rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#8BAEC8; margin-bottom:0.3rem; }
+.wi-price { font-family:'DM Serif Display',serif; font-size:2rem; font-weight:700; color:#FFFFFF; margin-bottom:0.2rem; line-height:1.1; }
+.wi-new   { font-family:'DM Serif Display',serif; font-size:2.5rem; font-weight:700; color:#00BCD4; margin-bottom:0.2rem; line-height:1.1; }
+.wi-change-pos { font-size:1rem; font-weight:800; color:#00C853; margin-top:0.4rem; display:block; }
+.wi-change-neg { font-size:1rem; font-weight:800; color:#FF5252; margin-top:0.4rem; display:block; }
+.wi-bar-wrap { height:7px; background:rgba(255,255,255,0.1); border-radius:50px; overflow:hidden; margin:0.7rem 0 0.2rem; }
+.wi-bar-fill { height:100%; border-radius:50px; }
+
+/* ══ Impact rows ══ */
+.impact-card { background:#FFFFFF; border-radius:12px; padding:0.8rem 1rem; border:1px solid #E3EAF2; box-shadow:0 2px 8px rgba(13,27,42,0.06); }
+.impact-row  { display:flex; align-items:center; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid #F0F4F8; font-size:0.8rem; }
+.impact-row:last-child { border-bottom:none; }
+.impact-lbl  { font-weight:600; color:#1A2744; }
+.impact-val-pos { font-weight:800; color:#00A844; }
+.impact-val-neg { font-weight:800; color:#D32F2F; }
+.impact-val-neu { font-weight:700; color:#546E7A; }
+
+/* ══ EMI result card ══ */
+.emi-result-card { background:linear-gradient(135deg,#0D1B2A,#132338); border-radius:14px; padding:1.5rem; border:1px solid rgba(0,188,212,0.2); }
+.emi-kpi { text-align:center; padding:0.6rem; }
+.emi-kpi-lbl { font-size:0.65rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#4A7A9B; margin-bottom:0.3rem; }
+.emi-kpi-val { font-family:'DM Serif Display',serif; font-size:1.6rem; font-weight:700; color:#FFFFFF; }
+.emi-kpi-val.cyan  { color:#00BCD4; }
+.emi-kpi-val.amber { color:#FFB300; }
+.emi-kpi-val.red   { color:#FF5252; }
+.emi-divider { height:1px; background:rgba(255,255,255,0.08); margin:0.8rem 0; }
+
+/* ══ Down payment box ══ */
+.down-box { background:#F0F4F8; border-radius:10px; padding:0.8rem 1rem; margin-top:0.5rem; border:1px solid #E3EAF2; }
+.down-box-lbl { font-size:0.65rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#546E7A; margin-bottom:0.2rem; }
+.down-box-val { font-family:'DM Serif Display',serif; font-size:1.3rem; font-weight:700; color:#0D1B2A; }
+.down-box-sub { font-size:0.68rem; color:#546E7A; margin-top:0.1rem; }
+
+/* ══ Amortization table ══ */
+.amort-table { width:100%; border-collapse:collapse; font-size:0.78rem; }
+.amort-table th { background:#F0F4F8; padding:0.5rem 0.7rem; text-align:left; font-weight:700; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:#546E7A; border-bottom:2px solid #E3EAF2; }
+.amort-table td { padding:0.55rem 0.7rem; border-bottom:1px solid #F0F4F8; color:#1A2744; }
+.amort-table tr:last-child td { border-bottom:none; font-weight:700; background:rgba(0,188,212,0.04); }
+.amort-table .int-col { color:#F4511E; font-weight:700; }
+
+/* ══ Affordability tip ══ */
+.afford-tip { background:rgba(0,188,212,0.06); border:1px solid rgba(0,188,212,0.25); border-radius:10px; padding:0.8rem 1rem; margin-top:0.8rem; font-size:0.78rem; color:#1A2744; line-height:1.5; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -1163,19 +1303,19 @@ with wi1:
 
     wc1, wc2 = st.columns(2)
     with wc1:
-        st.markdown('<div style="font-size:0.7rem;font-weight:700;color:#0097A7;margin-bottom:0.3rem;">📐 SIZE & STRUCTURE</div>', unsafe_allow_html=True)
+        st.markdown('<span class="mini-label">📐 Size &amp; Structure</span>', unsafe_allow_html=True)
         wi_area      = st.slider("Area (sqft)",   500,  10000, area,       step=50,  key="wi_area")
         wi_bedrooms  = st.slider("Bedrooms",        1,     10, bedrooms,              key="wi_bed")
         wi_bathrooms = st.slider("Bathrooms",       1,      5, bathrooms,             key="wi_bath")
     with wc2:
-        st.markdown('<div style="font-size:0.7rem;font-weight:700;color:#0097A7;margin-bottom:0.3rem;">🏗 LAYOUT & EXTRAS</div>', unsafe_allow_html=True)
+        st.markdown('<span class="mini-label">🏗 Layout &amp; Extras</span>', unsafe_allow_html=True)
         wi_stories   = st.slider("Stories",         1,      4, stories,               key="wi_stor")
         wi_parking   = st.slider("Parking Spaces",         0,      5, parking,               key="wi_park")
         wi_furnish   = st.selectbox("Furnishing Status",
                            ["Furnished","Semi-Furnished","Unfurnished"],
                            index=["Furnished","Semi-Furnished","Unfurnished"].index(furnishing),
                            key="wi_furn")
-    st.markdown('<div style="font-size:0.7rem;font-weight:700;color:#0097A7;margin:0.5rem 0 0.3rem;">❄ AMENITIES</div>', unsafe_allow_html=True)
+    st.markdown('<span class="mini-label">❄ Amenities</span>', unsafe_allow_html=True)
     wi_ac      = st.selectbox("Air Conditioning", ["Yes","No"],
                     index=0 if airconditioning=="Yes" else 1, key="wi_ac")
     wi_prefarea= st.selectbox("Preferred Area",   ["Yes","No"],
@@ -1262,7 +1402,7 @@ with wi2:
               <span class="impact-lbl">{lbl}</span>
               <span class="{cls}">{sign}${imp:,.0f}</span>
             </div>'''
-        st.markdown(f'<div class="whatif-card" style="padding:0.8rem 1rem;">{rows_html}</div>', unsafe_allow_html=True)
+        st.markdown('<div class="impact-card">' + rows_html + '</div>', unsafe_allow_html=True)
     else:
         st.markdown('<div style="font-size:0.82rem;color:#8BAEC8;font-style:italic;">Adjust any slider above to see impact</div>', unsafe_allow_html=True)
 
@@ -1273,23 +1413,7 @@ with wi2:
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 st.markdown('<div class="sec-title">🏦 EMI & Loan Calculator</div>', unsafe_allow_html=True)
 
-st.markdown("""
-<style>
-.emi-card{background:#FFFFFF;border-radius:16px;padding:1.5rem 1.8rem;border:1px solid #E3EAF2;box-shadow:0 4px 20px rgba(13,27,42,0.08);}
-.emi-result-card{background:linear-gradient(135deg,#0D1B2A,#132338);border-radius:14px;padding:1.5rem;border:1px solid rgba(0,188,212,0.2);}
-.emi-kpi{text-align:center;padding:0.6rem;}
-.emi-kpi-lbl{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#4A7A9B;margin-bottom:0.3rem;}
-.emi-kpi-val{font-family:'DM Serif Display',serif;font-size:1.6rem;font-weight:700;color:#FFFFFF;}
-.emi-kpi-val.cyan{color:#00BCD4;}
-.emi-kpi-val.amber{color:#FFB300;}
-.emi-kpi-val.red{color:#FF5252;}
-.emi-divider{height:1px;background:rgba(255,255,255,0.08);margin:0.8rem 0;}
-.amort-row{display:flex;justify-content:space-between;align-items:center;padding:0.4rem 0.6rem;border-radius:6px;font-size:0.76rem;}
-.amort-row:nth-child(even){background:rgba(0,188,212,0.04);}
-.amort-lbl{font-weight:600;color:#546E7A;}
-.amort-val{font-weight:700;color:#1A2744;}
-</style>
-""", unsafe_allow_html=True)
+# EMI styles already defined above
 
 ec1, ec2 = st.columns([3, 2], gap="large")
 
@@ -1300,7 +1424,7 @@ with ec1:
 
     emcc1, emcc2 = st.columns(2)
     with emcc1:
-        st.markdown('<div style="font-size:0.7rem;font-weight:700;color:#0097A7;margin-bottom:0.3rem;">💰 LOAN DETAILS</div>', unsafe_allow_html=True)
+        st.markdown('<span class="mini-label">💰 Loan Details</span>', unsafe_allow_html=True)
         loan_amount  = st.number_input("Loan Amount (₹)", 100000, max_loan,
                                         int(predicted_price_emi * 0.8), step=50000, key="emi_loan",
                                         help="Typically 80% of property value")
@@ -1308,13 +1432,16 @@ with ec1:
     with emcc2:
         tenure_years = st.slider("Loan Tenure (Years)",   5, 30, 20, key="emi_tenure")
         down_payment = int(predicted_price_emi - loan_amount)
-        st.markdown(f"""
-        <div style="background:#F0F4F8;border-radius:10px;padding:0.8rem 1rem;margin-top:0.5rem;">
-          <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#546E7A;">Down Payment</div>
-          <div style="font-size:1.3rem;font-weight:800;color:#0D1B2A;font-family:'DM Serif Display',serif;">₹{max(0,down_payment):,.0f}</div>
-          <div style="font-size:0.68rem;color:#546E7A;">{max(0,down_payment/predicted_price_emi*100):.1f}% of property value</div>
-        </div>
-        """, unsafe_allow_html=True)
+        _dp_val = max(0, down_payment)
+        _dp_pct = max(0.0, (down_payment / predicted_price_emi) * 100)
+        st.markdown(
+            '<div class="down-box">'
+            '<div class="down-box-lbl">Down Payment</div>'
+            '<div class="down-box-val">₹' + f'{_dp_val:,.0f}' + '</div>'
+            '<div class="down-box-sub">' + f'{_dp_pct:.1f}' + '% of property value</div>'
+            '</div>',
+            unsafe_allow_html=True
+        )
     st.markdown('</div>', unsafe_allow_html=True)
 
     # Amortization table (5-year snapshots)
@@ -1327,8 +1454,7 @@ with ec1:
     else:
         monthly_emi = loan_amount / n
 
-    amort_html = '<div class="emi-card" style="padding:0.5rem 0.8rem;">'
-    amort_html += '<div class="amort-row"><span class="amort-lbl">Year</span><span class="amort-val">Principal Paid</span><span class="amort-val">Interest Paid</span><span class="amort-val">Balance</span></div>'
+    amort_rows = ""
     balance = float(loan_amount)
     for yr in range(1, tenure_years+1):
         yr_principal = 0; yr_interest = 0
@@ -1340,8 +1466,21 @@ with ec1:
             yr_principal += prin_payment
             balance      -= prin_payment
         if yr % 5 == 0 or yr == 1 or yr == tenure_years:
-            amort_html += f'<div class="amort-row"><span class="amort-lbl">Year {yr}</span><span class="amort-val">₹{yr_principal:,.0f}</span><span class="amort-val" style="color:#FF7043;">₹{yr_interest:,.0f}</span><span class="amort-val">₹{max(0,balance):,.0f}</span></div>'
-    amort_html += '</div>'
+            amort_rows += (
+                "<tr>"
+                "<td>Year " + str(yr) + "</td>"
+                "<td>\u20b9" + f"{yr_principal:,.0f}" + "</td>"
+                "<td class='int-col'>\u20b9" + f"{yr_interest:,.0f}" + "</td>"
+                "<td>\u20b9" + f"{max(0,balance):,.0f}" + "</td>"
+                "</tr>"
+            )
+    amort_html = (
+        '<div class="emi-card" style="padding:0.6rem 0.8rem;margin-top:0.5rem;">'
+        '<table class="amort-table">'
+        '<thead><tr><th>Year</th><th>Principal Paid</th><th>Interest Paid</th><th>Balance</th></tr></thead>'
+        '<tbody>' + amort_rows + '</tbody>'
+        '</table></div>'
+    )
     st.markdown(amort_html, unsafe_allow_html=True)
 
 with ec2:
@@ -1402,13 +1541,14 @@ with ec2:
 
     # EMI affordability tip
     monthly_income_est = monthly_emi / 0.4
-    st.markdown(f"""
-    <div style="background:rgba(0,188,212,0.07);border:1px solid rgba(0,188,212,0.3);border-radius:10px;padding:0.8rem 1rem;margin-top:0.8rem;font-size:0.78rem;color:#1A2744;">
-      💡 <b>Affordability Tip:</b> To comfortably afford this EMI, a monthly income of
-      <b style="color:#0097A7;">₹{monthly_income_est:,.0f}</b> is recommended
-      (keeping EMI ≤ 40% of income).
-    </div>
-    """, unsafe_allow_html=True)
+    _inc = monthly_income_est
+    st.markdown(
+        '<div class="afford-tip">'
+        '\U0001F4A1 <b>Affordability Tip:</b> To comfortably afford this EMI, '
+        'a monthly income of <b style="color:#0097A7;">\u20b9' + f'{_inc:,.0f}' + '</b> is recommended '
+        '(keeping EMI \u2264 40% of income).</div>',
+        unsafe_allow_html=True
+    )
 
 
 # ════════════════════════════════════════════════════════════════════
