@@ -612,30 +612,122 @@ st.markdown('<div class="sec-title">🏡 Property Showcase</div>', unsafe_allow_
 
 st.markdown("""
 <style>
-/* ── Filter bar ── */
-div[data-testid="stHorizontalBlock"] .filter-btn-active > button {
-    background: #0D1B2A !important;
-    color: #00BCD4 !important;
+/* ══════════════════════════════════════════
+   GLOBAL BUTTON RESET — professional styles
+══════════════════════════════════════════ */
+
+/* Default: all buttons = white bg, dark navy text */
+div[data-testid="stButton"] > button,
+div[data-testid="stButton"] > button:focus,
+div[data-testid="stButton"] > button:focus:not(:active) {
+    background-color: #FFFFFF !important;
+    background-image: none !important;
+    color: #1A2744 !important;
+    border: 1.5px solid #CBD8E8 !important;
+    border-radius: 50px !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    padding: 0.42rem 1rem !important;
+    width: 100% !important;
+    transition: all 0.18s ease !important;
+    box-shadow: 0 1px 4px rgba(13,27,42,0.07) !important;
+}
+div[data-testid="stButton"] > button:hover {
+    background-color: #F0F8FF !important;
+    border-color: #00BCD4 !important;
+    color: #006064 !important;
+    box-shadow: 0 3px 12px rgba(0,188,212,0.18) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Active filter: navy bg + cyan text */
+.flt-active div[data-testid="stButton"] > button,
+.flt-active div[data-testid="stButton"] > button:focus,
+.flt-active div[data-testid="stButton"] > button:focus:not(:active) {
+    background-color: #0D1B2A !important;
+    background-image: none !important;
+    color: #00E5FF !important;
     border: 2px solid #00BCD4 !important;
     border-radius: 50px !important;
-}
-div[data-testid="stHorizontalBlock"] .filter-btn-inactive > button {
-    background: #FFFFFF !important;
-    color: #1A2744 !important;
-    border: 1.5px solid #E3EAF2 !important;
-    border-radius: 50px !important;
-}
-div[data-testid="stHorizontalBlock"] button {
-    width: 100% !important;
-    font-size: 0.78rem !important;
+    box-shadow: 0 4px 16px rgba(0,188,212,0.30) !important;
     font-weight: 700 !important;
-    padding: 0.38rem 0.5rem !important;
-    transition: all 0.2s !important;
 }
-div[data-testid="stHorizontalBlock"] button:hover {
-    border-color: #00BCD4 !important;
-    color: #00BCD4 !important;
+.flt-active div[data-testid="stButton"] > button:hover {
+    background-color: #132338 !important;
+    color: #00E5FF !important;
+    border-color: #00E5FF !important;
+    transform: translateY(-1px) !important;
 }
+
+/* View Details button: cyan gradient */
+.view-btn div[data-testid="stButton"] > button,
+.view-btn div[data-testid="stButton"] > button:focus,
+.view-btn div[data-testid="stButton"] > button:focus:not(:active) {
+    background-color: #0077B6 !important;
+    background-image: linear-gradient(135deg, #0077B6, #00BCD4) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    border-radius: 10px !important;
+    font-size: 0.76rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.07em !important;
+    text-transform: uppercase !important;
+    box-shadow: 0 4px 16px rgba(0,188,212,0.35) !important;
+    padding: 0.55rem 1rem !important;
+}
+.view-btn div[data-testid="stButton"] > button:hover {
+    background-color: #005F8F !important;
+    background-image: linear-gradient(135deg, #005F8F, #0097A7) !important;
+    color: #FFFFFF !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 24px rgba(0,188,212,0.45) !important;
+}
+
+/* Close button: red outline */
+.close-btn div[data-testid="stButton"] > button,
+.close-btn div[data-testid="stButton"] > button:focus {
+    background-color: #FFF5F5 !important;
+    background-image: none !important;
+    border: 1.5px solid #FFCDD2 !important;
+    color: #C62828 !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    font-size: 0.76rem !important;
+}
+.close-btn div[data-testid="stButton"] > button:hover {
+    background-color: #FFEBEE !important;
+    border-color: #FF5252 !important;
+    color: #B71C1C !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Sidebar predict button: cyan gradient */
+[data-testid="stSidebar"] div[data-testid="stButton"] > button,
+[data-testid="stSidebar"] div[data-testid="stButton"] > button:focus,
+[data-testid="stSidebar"] div[data-testid="stButton"] > button:focus:not(:active) {
+    background-color: #0077B6 !important;
+    background-image: linear-gradient(135deg, #0077B6, #00BCD4) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    font-size: 0.88rem !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
+    box-shadow: 0 4px 18px rgba(0,188,212,0.45) !important;
+    padding: 0.75rem 1rem !important;
+    margin-top: 8px !important;
+}
+[data-testid="stSidebar"] div[data-testid="stButton"] > button:hover {
+    background-color: #005F8F !important;
+    background-image: linear-gradient(135deg, #005F8F, #0097A7) !important;
+    color: #FFFFFF !important;
+    transform: translateY(-2px) scale(1.01) !important;
+    box-shadow: 0 8px 28px rgba(0,188,212,0.6) !important;
+}
+
 
 /* ── Listing card ── */
 .lcard {
@@ -824,7 +916,7 @@ if st.session_state.selected_listing is not None:
     st.markdown("<br>", unsafe_allow_html=True)
     col_close, _ = st.columns([2, 8])
     with col_close:
-        st.markdown('<div class="close-btn-wrap">', unsafe_allow_html=True)
+        st.markdown('<div class="close-btn">', unsafe_allow_html=True)
         if st.button("✕  Close Details", key="close_detail"):
             st.session_state.selected_listing = None
             st.rerun()
@@ -857,9 +949,11 @@ for row_start in range(0, len(active_listings), 3):
               </div>
             </div>
             """, unsafe_allow_html=True)
-            if st.button(f"View Details  →", key=f"view_{l['title'].replace(' ','_')}", use_container_width=True):
+            st.markdown('<div class="view-btn">', unsafe_allow_html=True)
+            if st.button("View Details →", key=f"view_{l['title'].replace(' ','_')}", use_container_width=True):
                 st.session_state.selected_listing = l
                 st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
 
 # ════════════════════════════════════════════════════════════════════
 #  LOCATION INTELLIGENCE — pydeck Map + Location Search + Nb Scores
