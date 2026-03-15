@@ -1163,19 +1163,22 @@ with wi1:
 
     wc1, wc2 = st.columns(2)
     with wc1:
-        wi_area      = st.slider("📐 Area (sqft)",   500,  10000, area,       step=50,  key="wi_area")
-        wi_bedrooms  = st.slider("🛏 Bedrooms",        1,     10, bedrooms,              key="wi_bed")
-        wi_bathrooms = st.slider("🚿 Bathrooms",       1,      5, bathrooms,             key="wi_bath")
+        st.markdown('<div style="font-size:0.7rem;font-weight:700;color:#0097A7;margin-bottom:0.3rem;">📐 SIZE & STRUCTURE</div>', unsafe_allow_html=True)
+        wi_area      = st.slider("Area (sqft)",   500,  10000, area,       step=50,  key="wi_area")
+        wi_bedrooms  = st.slider("Bedrooms",        1,     10, bedrooms,              key="wi_bed")
+        wi_bathrooms = st.slider("Bathrooms",       1,      5, bathrooms,             key="wi_bath")
     with wc2:
-        wi_stories   = st.slider("🏗 Stories",         1,      4, stories,               key="wi_stor")
-        wi_parking   = st.slider("🚗 Parking",         0,      5, parking,               key="wi_park")
-        wi_furnish   = st.selectbox("🛋 Furnishing",
+        st.markdown('<div style="font-size:0.7rem;font-weight:700;color:#0097A7;margin-bottom:0.3rem;">🏗 LAYOUT & EXTRAS</div>', unsafe_allow_html=True)
+        wi_stories   = st.slider("Stories",         1,      4, stories,               key="wi_stor")
+        wi_parking   = st.slider("Parking Spaces",         0,      5, parking,               key="wi_park")
+        wi_furnish   = st.selectbox("Furnishing Status",
                            ["Furnished","Semi-Furnished","Unfurnished"],
                            index=["Furnished","Semi-Furnished","Unfurnished"].index(furnishing),
                            key="wi_furn")
-    wi_ac      = st.selectbox("❄️ Air Conditioning", ["Yes","No"],
+    st.markdown('<div style="font-size:0.7rem;font-weight:700;color:#0097A7;margin:0.5rem 0 0.3rem;">❄ AMENITIES</div>', unsafe_allow_html=True)
+    wi_ac      = st.selectbox("Air Conditioning", ["Yes","No"],
                     index=0 if airconditioning=="Yes" else 1, key="wi_ac")
-    wi_prefarea= st.selectbox("⭐ Preferred Area",   ["Yes","No"],
+    wi_prefarea= st.selectbox("Preferred Area",   ["Yes","No"],
                     index=0 if prefarea=="Yes" else 1,        key="wi_pref")
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -1297,12 +1300,13 @@ with ec1:
 
     emcc1, emcc2 = st.columns(2)
     with emcc1:
-        loan_amount  = st.number_input("💰 Loan Amount (₹)", 100000, max_loan,
+        st.markdown('<div style="font-size:0.7rem;font-weight:700;color:#0097A7;margin-bottom:0.3rem;">💰 LOAN DETAILS</div>', unsafe_allow_html=True)
+        loan_amount  = st.number_input("Loan Amount (₹)", 100000, max_loan,
                                         int(predicted_price_emi * 0.8), step=50000, key="emi_loan",
                                         help="Typically 80% of property value")
-        interest_rate= st.slider("📈 Interest Rate (% p.a.)", 6.0, 16.0, 8.5, step=0.1, key="emi_rate")
+        interest_rate= st.slider("Interest Rate (% p.a.)", 6.0, 16.0, 8.5, step=0.1, key="emi_rate")
     with emcc2:
-        tenure_years = st.slider("📅 Loan Tenure (Years)",   5, 30, 20, key="emi_tenure")
+        tenure_years = st.slider("Loan Tenure (Years)",   5, 30, 20, key="emi_tenure")
         down_payment = int(predicted_price_emi - loan_amount)
         st.markdown(f"""
         <div style="background:#F0F4F8;border-radius:10px;padding:0.8rem 1rem;margin-top:0.5rem;">
@@ -1455,23 +1459,26 @@ with rp1:
     if prefarea=="Yes":        amenity_tags.append("Preferred Area")
     amenity_tags.append(furnishing)
 
-    amenity_html = " &nbsp;·&nbsp; ".join(
-        f'<span style="background:rgba(0,188,212,0.1);color:#0097A7;border-radius:4px;padding:2px 8px;font-size:0.65rem;font-weight:700;">{a}</span>'
+    amenity_html = " &nbsp;&middot;&nbsp; ".join(
+        '<span style="background:rgba(0,188,212,0.1);color:#0097A7;border-radius:4px;padding:2px 8px;font-size:0.65rem;font-weight:700;">' + str(a) + '</span>'
         for a in amenity_tags
     )
 
     _sc_rp = CITY_SCORES.get("Rajkot, Gujarat", [88,75,92,70,60,82])
-    nb_score_html = ''
+    nb_score_html = ""
     nb_data = [("Schools",_sc_rp[0],"#1565C0"),("Healthcare",_sc_rp[1],"#00C853"),
                ("Markets",_sc_rp[2],"#00BCD4"),("Transport",_sc_rp[3],"#FFB300"),
                ("Safety",_sc_rp[5],"#7C4DFF")]
-    for lbl, sc, col in nb_data:
-        nb_score_html += f'''
-        <div class="rp-score-row">
-          <span class="rp-score-lbl">{lbl}</span>
-          <div class="rp-score-bar"><div class="rp-score-fill" style="width:{sc}%;background:{col};"></div></div>
-          <span class="rp-score-num" style="color:{col};">{sc}</span>
-        </div>'''
+    for _lbl, _sc, _col in nb_data:
+        nb_score_html += (
+            '<div class="rp-score-row">'
+            '<span class="rp-score-lbl">' + _lbl + '</span>'
+            '<div class="rp-score-bar">'
+            '<div class="rp-score-fill" style="width:' + str(_sc) + '%;background:' + _col + ';"></div>'
+            '</div>'
+            '<span class="rp-score-num" style="color:' + _col + ';">' + str(_sc) + '</span>'
+            '</div>'
+        )
 
     import datetime
     today = datetime.date.today().strftime("%d %B %Y")
@@ -1481,52 +1488,57 @@ with rp1:
     loan_emi = report_price * 0.8
     monthly_emi_rp = loan_emi * r_emi * (1+r_emi)**n_emi / ((1+r_emi)**n_emi - 1)
 
-    st.markdown(f"""
-    <div class="report-preview">
-      <div class="rp-header">
-        <div class="rp-logo">Estate<span>IQ</span> PRO</div>
-        <div class="rp-tagline">AI Property Valuation Report &nbsp;·&nbsp; {today}</div>
-      </div>
-      <div class="rp-body">
-        <div class="rp-price-block">
-          <div class="rp-price-lbl">Estimated Market Value</div>
-          <div class="rp-price-val">${report_price:,.0f}</div>
-          <div style="font-size:0.72rem;color:#546E7A;margin-top:0.3rem;">Range: ${report_price*0.92:,.0f} – ${report_price*1.08:,.0f}</div>
-        </div>
+    _rp_price     = f"${report_price:,.0f}"
+    _rp_low       = f"${report_price*0.92:,.0f}"
+    _rp_high      = f"${report_price*1.08:,.0f}"
+    _rp_area      = f"{area:,} sqft"
+    _rp_ppsqft    = f"${report_price/area:,.0f}"
+    _rp_future    = f"${future_5yr:,.0f}"
+    _rp_emi       = f"\u20b9{monthly_emi_rp:,.0f}"
+    _rp_rent      = f"\u20b9{report_price*0.004:,.0f}"
 
-        <div class="rp-section">
-          <div class="rp-section-title">Property Specifications</div>
-          <div class="rp-grid">
-            <div class="rp-cell"><div class="rp-cell-lbl">Area</div><div class="rp-cell-val">{area:,} sqft</div></div>
-            <div class="rp-cell"><div class="rp-cell-lbl">Bedrooms</div><div class="rp-cell-val">{bedrooms}</div></div>
-            <div class="rp-cell"><div class="rp-cell-lbl">Bathrooms</div><div class="rp-cell-val">{bathrooms}</div></div>
-            <div class="rp-cell"><div class="rp-cell-lbl">Stories</div><div class="rp-cell-val">{stories}</div></div>
-            <div class="rp-cell"><div class="rp-cell-lbl">Parking</div><div class="rp-cell-val">{parking}</div></div>
-            <div class="rp-cell"><div class="rp-cell-lbl">Price/sqft</div><div class="rp-cell-val">${report_price/area:,.0f}</div></div>
-          </div>
-          <div style="margin-top:0.5rem;">{amenity_html}</div>
-        </div>
-
-        <div class="rp-section">
-          <div class="rp-section-title">Investment Projections</div>
-          <div class="rp-grid">
-            <div class="rp-cell"><div class="rp-cell-lbl">5-Year Value</div><div class="rp-cell-val" style="color:#00A844;">${future_5yr:,.0f}</div></div>
-            <div class="rp-cell"><div class="rp-cell-lbl">Monthly EMI</div><div class="rp-cell-val" style="color:#0097A7;">₹{monthly_emi_rp:,.0f}</div></div>
-            <div class="rp-cell"><div class="rp-cell-lbl">Est. Rent/mo</div><div class="rp-cell-val">₹{report_price*0.004:,.0f}</div></div>
-          </div>
-        </div>
-
-        <div class="rp-section">
-          <div class="rp-section-title">Neighborhood Scores — Rajkot</div>
-          {nb_score_html}
-        </div>
-      </div>
-      <div class="rp-footer-bar">
-        <span class="rp-footer-text">Generated by EstateIQ PRO &nbsp;·&nbsp; AI-Powered Valuation</span>
-        <span class="rp-footer-text" style="color:#00BCD4;">CONFIDENTIAL</span>
-      </div>
-    </div>
-    """, unsafe_allow_html=True)
+    report_html = (
+        '<div class="report-preview">'
+        '<div class="rp-header">' 
+        '<div class="rp-logo">Estate<span>IQ</span> PRO</div>'
+        '<div class="rp-tagline">AI Property Valuation Report &nbsp;&middot;&nbsp; ' + today + '</div>'
+        '</div>'
+        '<div class="rp-body">'
+        '<div class="rp-price-block">'
+        '<div class="rp-price-lbl">Estimated Market Value</div>'
+        '<div class="rp-price-val">' + _rp_price + '</div>'
+        '<div style="font-size:0.72rem;color:#546E7A;margin-top:0.3rem;">Range: ' + _rp_low + ' \u2013 ' + _rp_high + '</div>'
+        '</div>'
+        '<div class="rp-section">'
+        '<div class="rp-section-title">Property Specifications</div>'
+        '<div class="rp-grid">'
+        '<div class="rp-cell"><div class="rp-cell-lbl">Area</div><div class="rp-cell-val">' + _rp_area + '</div></div>'
+        '<div class="rp-cell"><div class="rp-cell-lbl">Bedrooms</div><div class="rp-cell-val">' + str(bedrooms) + '</div></div>'
+        '<div class="rp-cell"><div class="rp-cell-lbl">Bathrooms</div><div class="rp-cell-val">' + str(bathrooms) + '</div></div>'
+        '<div class="rp-cell"><div class="rp-cell-lbl">Stories</div><div class="rp-cell-val">' + str(stories) + '</div></div>'
+        '<div class="rp-cell"><div class="rp-cell-lbl">Parking</div><div class="rp-cell-val">' + str(parking) + '</div></div>'
+        '<div class="rp-cell"><div class="rp-cell-lbl">Price/sqft</div><div class="rp-cell-val">' + _rp_ppsqft + '</div></div>'
+        '</div>'
+        '<div style="margin-top:0.5rem;">' + amenity_html + '</div>'
+        '</div>'
+        '<div class="rp-section">'
+        '<div class="rp-section-title">Investment Projections</div>'
+        '<div class="rp-grid">'
+        '<div class="rp-cell"><div class="rp-cell-lbl">5-Year Value</div><div class="rp-cell-val" style="color:#00A844;">' + _rp_future + '</div></div>'
+        '<div class="rp-cell"><div class="rp-cell-lbl">Monthly EMI</div><div class="rp-cell-val" style="color:#0097A7;">' + _rp_emi + '</div></div>'
+        '<div class="rp-cell"><div class="rp-cell-lbl">Est. Rent/mo</div><div class="rp-cell-val">' + _rp_rent + '</div></div>'
+        '</div></div>'
+        '<div class="rp-section">'
+        '<div class="rp-section-title">Neighborhood Scores \u2014 Rajkot</div>'
+        + nb_score_html +
+        '</div>'
+        '</div>'
+        '<div class="rp-footer-bar">'
+        '<span class="rp-footer-text">Generated by EstateIQ PRO &nbsp;&middot;&nbsp; AI-Powered Valuation</span>'
+        '<span class="rp-footer-text" style="color:#00BCD4;">CONFIDENTIAL</span>'
+        '</div></div>'
+    )
+    st.markdown(report_html, unsafe_allow_html=True)
 
 with rp2:
     st.markdown('<div style="font-size:0.74rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#546E7A;margin-bottom:1rem;">Generate & Download Report</div>', unsafe_allow_html=True)
