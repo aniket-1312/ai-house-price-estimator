@@ -1126,6 +1126,545 @@ with nb_col:
           <div class="comp2-p">{ptag}</div>
         </div>""", unsafe_allow_html=True)
 
+
+# ════════════════════════════════════════════════════════════════════
+#  FEATURE 1 — WHAT-IF SIMULATOR
+# ════════════════════════════════════════════════════════════════════
+st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+st.markdown('<div class="sec-title">🔬 What-If Price Simulator</div>', unsafe_allow_html=True)
+
+st.markdown("""
+<style>
+.whatif-card{background:#FFFFFF;border-radius:16px;padding:1.4rem 1.6rem;border:1px solid #E3EAF2;box-shadow:0 4px 20px rgba(13,27,42,0.08);}
+.whatif-result{background:linear-gradient(135deg,#0D1B2A,#1A3050);border-radius:14px;padding:1.4rem 1.8rem;border:1px solid rgba(0,188,212,0.25);text-align:center;}
+.wi-base{font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8BAEC8;margin-bottom:0.3rem;}
+.wi-price{font-family:'DM Serif Display',serif;font-size:2.2rem;font-weight:700;color:#FFFFFF;margin-bottom:0.2rem;}
+.wi-new{font-family:'DM Serif Display',serif;font-size:2.6rem;font-weight:700;color:#00BCD4;margin-bottom:0.2rem;}
+.wi-change-pos{font-size:1rem;font-weight:800;color:#00C853;}
+.wi-change-neg{font-size:1rem;font-weight:800;color:#FF5252;}
+.wi-bar-wrap{height:8px;background:rgba(255,255,255,0.1);border-radius:50px;overflow:hidden;margin:0.8rem 0 0.3rem;}
+.wi-bar-fill{height:100%;border-radius:50px;transition:width 0.4s ease;}
+.impact-row{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid #F0F4F8;font-size:0.82rem;}
+.impact-row:last-child{border-bottom:none;}
+.impact-lbl{font-weight:600;color:#1A2744;}
+.impact-val-pos{font-weight:800;color:#00A844;}
+.impact-val-neg{font-weight:800;color:#D32F2F;}
+.impact-val-neu{font-weight:700;color:#546E7A;}
+</style>
+""", unsafe_allow_html=True)
+
+base_price = model.predict(input_data)[0]
+
+wi1, wi2 = st.columns([3, 2], gap="large")
+
+with wi1:
+    st.markdown('<div class="whatif-card">', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#546E7A;margin-bottom:1rem;">Adjust features and see price impact instantly</div>', unsafe_allow_html=True)
+
+    wc1, wc2 = st.columns(2)
+    with wc1:
+        wi_area      = st.slider("📐 Area (sqft)",   500,  10000, area,       step=50,  key="wi_area")
+        wi_bedrooms  = st.slider("🛏 Bedrooms",        1,     10, bedrooms,              key="wi_bed")
+        wi_bathrooms = st.slider("🚿 Bathrooms",       1,      5, bathrooms,             key="wi_bath")
+    with wc2:
+        wi_stories   = st.slider("🏗 Stories",         1,      4, stories,               key="wi_stor")
+        wi_parking   = st.slider("🚗 Parking",         0,      5, parking,               key="wi_park")
+        wi_furnish   = st.selectbox("🛋 Furnishing",
+                           ["Furnished","Semi-Furnished","Unfurnished"],
+                           index=["Furnished","Semi-Furnished","Unfurnished"].index(furnishing),
+                           key="wi_furn")
+    wi_ac      = st.selectbox("❄️ Air Conditioning", ["Yes","No"],
+                    index=0 if airconditioning=="Yes" else 1, key="wi_ac")
+    wi_prefarea= st.selectbox("⭐ Preferred Area",   ["Yes","No"],
+                    index=0 if prefarea=="Yes" else 1,        key="wi_pref")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with wi2:
+    wi_input = pd.DataFrame({
+        "area":                           [wi_area],
+        "bedrooms":                       [wi_bedrooms],
+        "bathrooms":                      [wi_bathrooms],
+        "stories":                        [wi_stories],
+        "parking":                        [wi_parking],
+        "mainroad_yes":                   [1 if mainroad=="Yes" else 0],
+        "guestroom_yes":                  [1 if guestroom=="Yes" else 0],
+        "basement_yes":                   [1 if basement=="Yes" else 0],
+        "hotwaterheating_yes":            [0],
+        "airconditioning_yes":            [1 if wi_ac=="Yes" else 0],
+        "prefarea_yes":                   [1 if wi_prefarea=="Yes" else 0],
+        "furnishingstatus_semi-furnished":[1 if wi_furnish=="Semi-Furnished" else 0],
+        "furnishingstatus_unfurnished":   [1 if wi_furnish=="Unfurnished" else 0],
+    })
+    new_price  = model.predict(wi_input)[0]
+    delta      = new_price - base_price
+    delta_pct  = (delta / base_price) * 100
+    bar_base   = min(base_price / max(base_price, new_price), 1.0) * 100
+    bar_new    = min(new_price  / max(base_price, new_price), 1.0) * 100
+    chg_class  = "wi-change-pos" if delta >= 0 else "wi-change-neg"
+    chg_sign   = "+" if delta >= 0 else ""
+    bar_color  = "#00C853" if delta >= 0 else "#FF5252"
+
+    st.markdown(f"""
+    <div class="whatif-result">
+      <div class="wi-base">Base Price</div>
+      <div class="wi-price">${base_price:,.0f}</div>
+      <div class="wi-bar-wrap"><div class="wi-bar-fill" style="width:{bar_base:.0f}%;background:#8BAEC8;"></div></div>
+      <div class="wi-base" style="margin-top:0.8rem;">New Estimate</div>
+      <div class="wi-new">${new_price:,.0f}</div>
+      <div class="wi-bar-wrap"><div class="wi-bar-fill" style="width:{bar_new:.0f}%;background:{bar_color};"></div></div>
+      <div class="{chg_class}">{chg_sign}${delta:,.0f} &nbsp;({chg_sign}{delta_pct:.1f}%)</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown('<div style="font-size:0.74rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#546E7A;margin-bottom:0.5rem;">Feature Impact Breakdown</div>', unsafe_allow_html=True)
+
+    # Compute individual feature impacts
+    def single_change(feature, val):
+        tmp = input_data.copy()
+        tmp[feature] = val
+        return model.predict(tmp)[0] - base_price
+
+    impacts = []
+    if wi_area != area:
+        impacts.append(("📐 Area change",       single_change("area", wi_area)))
+    if wi_bedrooms != bedrooms:
+        impacts.append(("🛏 Bedrooms change",   single_change("bedrooms", wi_bedrooms)))
+    if wi_bathrooms != bathrooms:
+        impacts.append(("🚿 Bathrooms change",  single_change("bathrooms", wi_bathrooms)))
+    if wi_stories != stories:
+        impacts.append(("🏗 Stories change",    single_change("stories", wi_stories)))
+    if wi_parking != parking:
+        impacts.append(("🚗 Parking change",    single_change("parking", wi_parking)))
+    if wi_ac != airconditioning:
+        impacts.append(("❄️ A/C change",         single_change("airconditioning_yes", 1 if wi_ac=="Yes" else 0)))
+    if wi_prefarea != prefarea:
+        impacts.append(("⭐ Pref. Area change", single_change("prefarea_yes", 1 if wi_prefarea=="Yes" else 0)))
+    if wi_furnish != furnishing:
+        tmp2 = input_data.copy()
+        tmp2["furnishingstatus_semi-furnished"] = 1 if wi_furnish=="Semi-Furnished" else 0
+        tmp2["furnishingstatus_unfurnished"]    = 1 if wi_furnish=="Unfurnished" else 0
+        impacts.append(("🛋 Furnishing change", model.predict(tmp2)[0] - base_price))
+
+    if impacts:
+        rows_html = ''
+        for lbl, imp in impacts:
+            if imp > 0:
+                cls = "impact-val-pos"; sign = "+"
+            elif imp < 0:
+                cls = "impact-val-neg"; sign = ""
+            else:
+                cls = "impact-val-neu"; sign = ""
+            rows_html += f'''<div class="impact-row">
+              <span class="impact-lbl">{lbl}</span>
+              <span class="{cls}">{sign}${imp:,.0f}</span>
+            </div>'''
+        st.markdown(f'<div class="whatif-card" style="padding:0.8rem 1rem;">{rows_html}</div>', unsafe_allow_html=True)
+    else:
+        st.markdown('<div style="font-size:0.82rem;color:#8BAEC8;font-style:italic;">Adjust any slider above to see impact</div>', unsafe_allow_html=True)
+
+
+# ════════════════════════════════════════════════════════════════════
+#  FEATURE 2 — EMI CALCULATOR
+# ════════════════════════════════════════════════════════════════════
+st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+st.markdown('<div class="sec-title">🏦 EMI & Loan Calculator</div>', unsafe_allow_html=True)
+
+st.markdown("""
+<style>
+.emi-card{background:#FFFFFF;border-radius:16px;padding:1.5rem 1.8rem;border:1px solid #E3EAF2;box-shadow:0 4px 20px rgba(13,27,42,0.08);}
+.emi-result-card{background:linear-gradient(135deg,#0D1B2A,#132338);border-radius:14px;padding:1.5rem;border:1px solid rgba(0,188,212,0.2);}
+.emi-kpi{text-align:center;padding:0.6rem;}
+.emi-kpi-lbl{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#4A7A9B;margin-bottom:0.3rem;}
+.emi-kpi-val{font-family:'DM Serif Display',serif;font-size:1.6rem;font-weight:700;color:#FFFFFF;}
+.emi-kpi-val.cyan{color:#00BCD4;}
+.emi-kpi-val.amber{color:#FFB300;}
+.emi-kpi-val.red{color:#FF5252;}
+.emi-divider{height:1px;background:rgba(255,255,255,0.08);margin:0.8rem 0;}
+.amort-row{display:flex;justify-content:space-between;align-items:center;padding:0.4rem 0.6rem;border-radius:6px;font-size:0.76rem;}
+.amort-row:nth-child(even){background:rgba(0,188,212,0.04);}
+.amort-lbl{font-weight:600;color:#546E7A;}
+.amort-val{font-weight:700;color:#1A2744;}
+</style>
+""", unsafe_allow_html=True)
+
+ec1, ec2 = st.columns([3, 2], gap="large")
+
+with ec1:
+    st.markdown('<div class="emi-card">', unsafe_allow_html=True)
+    predicted_price_emi = model.predict(input_data)[0]
+    max_loan = int(predicted_price_emi * 1.2)
+
+    emcc1, emcc2 = st.columns(2)
+    with emcc1:
+        loan_amount  = st.number_input("💰 Loan Amount (₹)", 100000, max_loan,
+                                        int(predicted_price_emi * 0.8), step=50000, key="emi_loan",
+                                        help="Typically 80% of property value")
+        interest_rate= st.slider("📈 Interest Rate (% p.a.)", 6.0, 16.0, 8.5, step=0.1, key="emi_rate")
+    with emcc2:
+        tenure_years = st.slider("📅 Loan Tenure (Years)",   5, 30, 20, key="emi_tenure")
+        down_payment = int(predicted_price_emi - loan_amount)
+        st.markdown(f"""
+        <div style="background:#F0F4F8;border-radius:10px;padding:0.8rem 1rem;margin-top:0.5rem;">
+          <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#546E7A;">Down Payment</div>
+          <div style="font-size:1.3rem;font-weight:800;color:#0D1B2A;font-family:'DM Serif Display',serif;">₹{max(0,down_payment):,.0f}</div>
+          <div style="font-size:0.68rem;color:#546E7A;">{max(0,down_payment/predicted_price_emi*100):.1f}% of property value</div>
+        </div>
+        """, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # Amortization table (5-year snapshots)
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown('<div style="font-size:0.74rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#546E7A;margin-bottom:0.6rem;">📋 Amortization Snapshots</div>', unsafe_allow_html=True)
+    r = (interest_rate / 100) / 12
+    n = tenure_years * 12
+    if r > 0:
+        monthly_emi = loan_amount * r * (1+r)**n / ((1+r)**n - 1)
+    else:
+        monthly_emi = loan_amount / n
+
+    amort_html = '<div class="emi-card" style="padding:0.5rem 0.8rem;">'
+    amort_html += '<div class="amort-row"><span class="amort-lbl">Year</span><span class="amort-val">Principal Paid</span><span class="amort-val">Interest Paid</span><span class="amort-val">Balance</span></div>'
+    balance = float(loan_amount)
+    for yr in range(1, tenure_years+1):
+        yr_principal = 0; yr_interest = 0
+        for _ in range(12):
+            if balance <= 0: break
+            int_payment  = balance * r
+            prin_payment = monthly_emi - int_payment
+            yr_interest  += int_payment
+            yr_principal += prin_payment
+            balance      -= prin_payment
+        if yr % 5 == 0 or yr == 1 or yr == tenure_years:
+            amort_html += f'<div class="amort-row"><span class="amort-lbl">Year {yr}</span><span class="amort-val">₹{yr_principal:,.0f}</span><span class="amort-val" style="color:#FF7043;">₹{yr_interest:,.0f}</span><span class="amort-val">₹{max(0,balance):,.0f}</span></div>'
+    amort_html += '</div>'
+    st.markdown(amort_html, unsafe_allow_html=True)
+
+with ec2:
+    r  = (interest_rate / 100) / 12
+    n  = tenure_years * 12
+    if r > 0:
+        monthly_emi   = loan_amount * r * (1+r)**n / ((1+r)**n - 1)
+    else:
+        monthly_emi   = loan_amount / n
+    total_payment = monthly_emi * n
+    total_interest= total_payment - loan_amount
+    interest_pct  = (total_interest / loan_amount) * 100
+
+    st.markdown(f"""
+    <div class="emi-result-card">
+      <div class="emi-kpi">
+        <div class="emi-kpi-lbl">Monthly EMI</div>
+        <div class="emi-kpi-val cyan">₹{monthly_emi:,.0f}</div>
+      </div>
+      <div class="emi-divider"></div>
+      <div style="display:flex;gap:0;">
+        <div class="emi-kpi" style="flex:1;">
+          <div class="emi-kpi-lbl">Total Payment</div>
+          <div class="emi-kpi-val" style="font-size:1.2rem;">₹{total_payment:,.0f}</div>
+        </div>
+        <div class="emi-kpi" style="flex:1;">
+          <div class="emi-kpi-lbl">Total Interest</div>
+          <div class="emi-kpi-val red" style="font-size:1.2rem;">₹{total_interest:,.0f}</div>
+        </div>
+      </div>
+      <div class="emi-divider"></div>
+      <div class="emi-kpi">
+        <div class="emi-kpi-lbl">Interest Burden</div>
+        <div class="emi-kpi-val amber">{interest_pct:.1f}% of loan</div>
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Pie chart — principal vs interest
+    st.markdown("<br>", unsafe_allow_html=True)
+    fig_pie, ax_pie = plt.subplots(figsize=(4, 3.5))
+    fig_pie.patch.set_facecolor("#FFFFFF")
+    ax_pie.set_facecolor("#FFFFFF")
+    sizes  = [loan_amount, total_interest]
+    labels = [f"Principal\n₹{loan_amount/1e5:.1f}L", f"Interest\n₹{total_interest/1e5:.1f}L"]
+    colors = ["#00BCD4", "#FF7043"]
+    wedges, texts, autotexts = ax_pie.pie(
+        sizes, labels=labels, colors=colors,
+        autopct="%1.1f%%", startangle=90,
+        wedgeprops=dict(edgecolor="white", linewidth=2),
+        textprops=dict(fontsize=8.5, color="#1A2744"),
+    )
+    for at in autotexts:
+        at.set_fontsize(8.5); at.set_fontweight("bold"); at.set_color("white")
+    ax_pie.set_title("Loan Breakdown", fontsize=10, fontweight="bold", color="#1A2744", pad=10)
+    fig_pie.tight_layout()
+    st.pyplot(fig_pie, use_container_width=True)
+
+    # EMI affordability tip
+    monthly_income_est = monthly_emi / 0.4
+    st.markdown(f"""
+    <div style="background:rgba(0,188,212,0.07);border:1px solid rgba(0,188,212,0.3);border-radius:10px;padding:0.8rem 1rem;margin-top:0.8rem;font-size:0.78rem;color:#1A2744;">
+      💡 <b>Affordability Tip:</b> To comfortably afford this EMI, a monthly income of
+      <b style="color:#0097A7;">₹{monthly_income_est:,.0f}</b> is recommended
+      (keeping EMI ≤ 40% of income).
+    </div>
+    """, unsafe_allow_html=True)
+
+
+# ════════════════════════════════════════════════════════════════════
+#  FEATURE 3 — PDF REPORT GENERATOR
+# ════════════════════════════════════════════════════════════════════
+st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+st.markdown('<div class="sec-title">📄 Property Valuation Report</div>', unsafe_allow_html=True)
+
+st.markdown("""
+<style>
+.report-preview{background:#FFFFFF;border-radius:16px;border:1px solid #E3EAF2;box-shadow:0 4px 20px rgba(13,27,42,0.08);overflow:hidden;}
+.rp-header{background:linear-gradient(135deg,#0D1B2A,#1A3050);padding:1.8rem 2rem;position:relative;overflow:hidden;}
+.rp-header::after{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(0,188,212,0.2) 0%,transparent 70%);}
+.rp-logo{font-family:'DM Serif Display',serif;font-size:1.4rem;font-weight:700;color:#FFFFFF;margin-bottom:0.15rem;}
+.rp-logo span{color:#00BCD4;}
+.rp-tagline{font-size:0.65rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#4A7A9B;}
+.rp-body{padding:1.6rem 2rem;}
+.rp-section{margin-bottom:1.2rem;}
+.rp-section-title{font-size:0.68rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#00BCD4;margin-bottom:0.6rem;padding-bottom:0.3rem;border-bottom:1px solid #E3EAF2;}
+.rp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;margin-bottom:0.8rem;}
+.rp-cell{background:#F0F4F8;border-radius:8px;padding:0.55rem 0.7rem;}
+.rp-cell-lbl{font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#546E7A;}
+.rp-cell-val{font-size:0.88rem;font-weight:800;color:#0D1B2A;margin-top:0.1rem;}
+.rp-price-block{background:linear-gradient(135deg,rgba(0,188,212,0.08),rgba(21,101,192,0.08));border:1px solid rgba(0,188,212,0.25);border-radius:10px;padding:1rem 1.2rem;text-align:center;margin-bottom:0.8rem;}
+.rp-price-lbl{font-size:0.65rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#0097A7;}
+.rp-price-val{font-family:'DM Serif Display',serif;font-size:2.2rem;font-weight:700;color:#0D1B2A;line-height:1.1;}
+.rp-score-row{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.4rem;}
+.rp-score-lbl{font-size:0.75rem;font-weight:600;color:#1A2744;min-width:110px;}
+.rp-score-bar{flex:1;height:6px;background:#E3EAF2;border-radius:50px;overflow:hidden;}
+.rp-score-fill{height:100%;border-radius:50px;}
+.rp-score-num{font-size:0.72rem;font-weight:800;min-width:24px;text-align:right;}
+.rp-footer-bar{background:#0D1B2A;padding:0.7rem 2rem;display:flex;justify-content:space-between;align-items:center;}
+.rp-footer-text{font-size:0.62rem;color:#4A7A9B;letter-spacing:0.1em;}
+</style>
+""", unsafe_allow_html=True)
+
+rp1, rp2 = st.columns([3, 2], gap="large")
+
+report_price = model.predict(input_data)[0]
+
+with rp1:
+    # Report preview
+    amenity_tags = []
+    if mainroad=="Yes":        amenity_tags.append("Main Road")
+    if guestroom=="Yes":       amenity_tags.append("Guest Room")
+    if basement=="Yes":        amenity_tags.append("Basement")
+    if airconditioning=="Yes": amenity_tags.append("Air Conditioning")
+    if prefarea=="Yes":        amenity_tags.append("Preferred Area")
+    amenity_tags.append(furnishing)
+
+    amenity_html = " &nbsp;·&nbsp; ".join(
+        f'<span style="background:rgba(0,188,212,0.1);color:#0097A7;border-radius:4px;padding:2px 8px;font-size:0.65rem;font-weight:700;">{a}</span>'
+        for a in amenity_tags
+    )
+
+    _sc_rp = CITY_SCORES.get("Rajkot, Gujarat", [88,75,92,70,60,82])
+    nb_score_html = ''
+    nb_data = [("Schools",_sc_rp[0],"#1565C0"),("Healthcare",_sc_rp[1],"#00C853"),
+               ("Markets",_sc_rp[2],"#00BCD4"),("Transport",_sc_rp[3],"#FFB300"),
+               ("Safety",_sc_rp[5],"#7C4DFF")]
+    for lbl, sc, col in nb_data:
+        nb_score_html += f'''
+        <div class="rp-score-row">
+          <span class="rp-score-lbl">{lbl}</span>
+          <div class="rp-score-bar"><div class="rp-score-fill" style="width:{sc}%;background:{col};"></div></div>
+          <span class="rp-score-num" style="color:{col};">{sc}</span>
+        </div>'''
+
+    import datetime
+    today = datetime.date.today().strftime("%d %B %Y")
+    future_5yr = report_price * ((1 + 0.07)**5)
+    r_emi = (8.5/100)/12
+    n_emi = 20*12
+    loan_emi = report_price * 0.8
+    monthly_emi_rp = loan_emi * r_emi * (1+r_emi)**n_emi / ((1+r_emi)**n_emi - 1)
+
+    st.markdown(f"""
+    <div class="report-preview">
+      <div class="rp-header">
+        <div class="rp-logo">Estate<span>IQ</span> PRO</div>
+        <div class="rp-tagline">AI Property Valuation Report &nbsp;·&nbsp; {today}</div>
+      </div>
+      <div class="rp-body">
+        <div class="rp-price-block">
+          <div class="rp-price-lbl">Estimated Market Value</div>
+          <div class="rp-price-val">${report_price:,.0f}</div>
+          <div style="font-size:0.72rem;color:#546E7A;margin-top:0.3rem;">Range: ${report_price*0.92:,.0f} – ${report_price*1.08:,.0f}</div>
+        </div>
+
+        <div class="rp-section">
+          <div class="rp-section-title">Property Specifications</div>
+          <div class="rp-grid">
+            <div class="rp-cell"><div class="rp-cell-lbl">Area</div><div class="rp-cell-val">{area:,} sqft</div></div>
+            <div class="rp-cell"><div class="rp-cell-lbl">Bedrooms</div><div class="rp-cell-val">{bedrooms}</div></div>
+            <div class="rp-cell"><div class="rp-cell-lbl">Bathrooms</div><div class="rp-cell-val">{bathrooms}</div></div>
+            <div class="rp-cell"><div class="rp-cell-lbl">Stories</div><div class="rp-cell-val">{stories}</div></div>
+            <div class="rp-cell"><div class="rp-cell-lbl">Parking</div><div class="rp-cell-val">{parking}</div></div>
+            <div class="rp-cell"><div class="rp-cell-lbl">Price/sqft</div><div class="rp-cell-val">${report_price/area:,.0f}</div></div>
+          </div>
+          <div style="margin-top:0.5rem;">{amenity_html}</div>
+        </div>
+
+        <div class="rp-section">
+          <div class="rp-section-title">Investment Projections</div>
+          <div class="rp-grid">
+            <div class="rp-cell"><div class="rp-cell-lbl">5-Year Value</div><div class="rp-cell-val" style="color:#00A844;">${future_5yr:,.0f}</div></div>
+            <div class="rp-cell"><div class="rp-cell-lbl">Monthly EMI</div><div class="rp-cell-val" style="color:#0097A7;">₹{monthly_emi_rp:,.0f}</div></div>
+            <div class="rp-cell"><div class="rp-cell-lbl">Est. Rent/mo</div><div class="rp-cell-val">₹{report_price*0.004:,.0f}</div></div>
+          </div>
+        </div>
+
+        <div class="rp-section">
+          <div class="rp-section-title">Neighborhood Scores — Rajkot</div>
+          {nb_score_html}
+        </div>
+      </div>
+      <div class="rp-footer-bar">
+        <span class="rp-footer-text">Generated by EstateIQ PRO &nbsp;·&nbsp; AI-Powered Valuation</span>
+        <span class="rp-footer-text" style="color:#00BCD4;">CONFIDENTIAL</span>
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+with rp2:
+    st.markdown('<div style="font-size:0.74rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#546E7A;margin-bottom:1rem;">Generate & Download Report</div>', unsafe_allow_html=True)
+
+    st.markdown('<div class="view-btn">', unsafe_allow_html=True)
+    generate_pdf = st.button("📥  Download PDF Report", key="gen_pdf", use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    if generate_pdf:
+        try:
+            from reportlab.lib.pagesizes import A4
+            from reportlab.lib import colors
+            from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+            from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
+            from reportlab.lib.units import cm
+            import io, datetime
+
+            buf = io.BytesIO()
+            doc = SimpleDocTemplate(buf, pagesize=A4,
+                                    leftMargin=2*cm, rightMargin=2*cm,
+                                    topMargin=2*cm, bottomMargin=2*cm)
+            styles = getSampleStyleSheet()
+            story  = []
+
+            # Title
+            title_style = ParagraphStyle("title", fontName="Helvetica-Bold",
+                fontSize=22, textColor=colors.HexColor("#0D1B2A"), spaceAfter=4)
+            sub_style   = ParagraphStyle("sub",   fontName="Helvetica",
+                fontSize=9,  textColor=colors.HexColor("#546E7A"), spaceAfter=16)
+            label_style = ParagraphStyle("lbl",   fontName="Helvetica-Bold",
+                fontSize=8,  textColor=colors.HexColor("#0097A7"), spaceAfter=4)
+            body_style  = ParagraphStyle("body",  fontName="Helvetica",
+                fontSize=10, textColor=colors.HexColor("#1A2744"), spaceAfter=6)
+
+            story.append(Paragraph("EstateIQ PRO", title_style))
+            story.append(Paragraph(f"AI Property Valuation Report  ·  {datetime.date.today().strftime('%d %B %Y')}", sub_style))
+            story.append(HRFlowable(width="100%", thickness=2, color=colors.HexColor("#00BCD4"), spaceAfter=12))
+
+            story.append(Paragraph("ESTIMATED MARKET VALUE", label_style))
+            price_style = ParagraphStyle("price", fontName="Helvetica-Bold",
+                fontSize=28, textColor=colors.HexColor("#0D1B2A"), spaceAfter=4)
+            story.append(Paragraph(f"${report_price:,.0f}", price_style))
+            story.append(Paragraph(f"Confidence Range: ${report_price*0.92:,.0f} – ${report_price*1.08:,.0f}", body_style))
+            story.append(Spacer(1, 0.4*cm))
+
+            story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#E3EAF2"), spaceAfter=10))
+            story.append(Paragraph("PROPERTY SPECIFICATIONS", label_style))
+            spec_data = [
+                ["Feature", "Value", "Feature", "Value"],
+                ["Area",        f"{area:,} sqft",    "Bedrooms",  str(bedrooms)],
+                ["Bathrooms",   str(bathrooms),       "Stories",   str(stories)],
+                ["Parking",     str(parking),         "Price/sqft",f"${report_price/area:,.0f}"],
+                ["Furnishing",  furnishing,           "A/C",       airconditioning],
+                ["Main Road",   mainroad,             "Pref. Area",prefarea],
+            ]
+            t = Table(spec_data, colWidths=[3.5*cm,3.5*cm,3.5*cm,3.5*cm])
+            t.setStyle(TableStyle([
+                ("BACKGROUND",   (0,0),(3,0), colors.HexColor("#0D1B2A")),
+                ("TEXTCOLOR",    (0,0),(3,0), colors.HexColor("#00BCD4")),
+                ("FONTNAME",     (0,0),(3,0), "Helvetica-Bold"),
+                ("FONTSIZE",     (0,0),(-1,-1), 9),
+                ("BACKGROUND",   (0,1),(-1,-1), colors.HexColor("#F8FAFC")),
+                ("ROWBACKGROUNDS",(0,1),(-1,-1),[colors.HexColor("#F8FAFC"),colors.white]),
+                ("GRID",         (0,0),(-1,-1), 0.5, colors.HexColor("#E3EAF2")),
+                ("FONTNAME",     (0,1),(-1,-1), "Helvetica"),
+                ("ALIGN",        (0,0),(-1,-1), "LEFT"),
+                ("PADDING",      (0,0),(-1,-1), 6),
+            ]))
+            story.append(t)
+            story.append(Spacer(1, 0.4*cm))
+
+            story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#E3EAF2"), spaceAfter=10))
+            story.append(Paragraph("INVESTMENT PROJECTIONS", label_style))
+            inv_data = [
+                ["Metric",            "Value"],
+                ["5-Year Value (7%)", f"${future_5yr:,.0f}"],
+                ["Monthly EMI (20yr)",f"₹{monthly_emi_rp:,.0f}"],
+                ["Est. Monthly Rent", f"₹{report_price*0.004:,.0f}"],
+                ["Gross Rental Yield",f"{(report_price*0.004*12/report_price)*100:.2f}%"],
+            ]
+            t2 = Table(inv_data, colWidths=[8*cm, 6*cm])
+            t2.setStyle(TableStyle([
+                ("BACKGROUND",   (0,0),(1,0), colors.HexColor("#0D1B2A")),
+                ("TEXTCOLOR",    (0,0),(1,0), colors.HexColor("#00BCD4")),
+                ("FONTNAME",     (0,0),(1,0), "Helvetica-Bold"),
+                ("FONTSIZE",     (0,0),(-1,-1), 9),
+                ("ROWBACKGROUNDS",(0,1),(-1,-1),[colors.HexColor("#F8FAFC"),colors.white]),
+                ("GRID",         (0,0),(-1,-1), 0.5, colors.HexColor("#E3EAF2")),
+                ("FONTNAME",     (0,1),(-1,-1), "Helvetica"),
+                ("ALIGN",        (0,0),(-1,-1), "LEFT"),
+                ("PADDING",      (0,0),(-1,-1), 7),
+            ]))
+            story.append(t2)
+            story.append(Spacer(1, 0.5*cm))
+
+            story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#E3EAF2"), spaceAfter=10))
+            story.append(Paragraph("DISCLAIMER", ParagraphStyle("dis", fontName="Helvetica", fontSize=7.5, textColor=colors.HexColor("#90A4AE"), spaceAfter=0)))
+            story.append(Paragraph("This report is generated by an AI/ML model and is intended for informational purposes only. Actual market prices may vary. Consult a certified real estate appraiser for legal valuation.", ParagraphStyle("dis2", fontName="Helvetica", fontSize=7.5, textColor=colors.HexColor("#90A4AE"))))
+
+            doc.build(story)
+            buf.seek(0)
+            st.download_button(
+                label="📄 Click to Download PDF",
+                data=buf,
+                file_name=f"EstateIQ_Valuation_Report.pdf",
+                mime="application/pdf",
+                key="dl_pdf"
+            )
+            st.success("✅ PDF ready! Click the button above to download.")
+        except ImportError:
+            st.warning("📦 Install reportlab for PDF export:\n```\npip install reportlab\n```")
+
+    st.markdown("""
+    <div style="margin-top:1.2rem;">
+      <div style="font-size:0.74rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#546E7A;margin-bottom:0.8rem;">Report Includes</div>
+    """, unsafe_allow_html=True)
+    report_items = [
+        ("✅","AI Estimated Market Value + Range"),
+        ("✅","Full Property Specifications"),
+        ("✅","5-Year Investment Projection"),
+        ("✅","EMI Estimate (20yr @ 8.5%)"),
+        ("✅","Estimated Monthly Rental Income"),
+        ("✅","Gross Rental Yield"),
+        ("✅","Neighborhood Scores"),
+        ("✅","Professional Branded Layout"),
+    ]
+    for icon, item in report_items:
+        st.markdown(f'<div style="display:flex;align-items:center;gap:8px;padding:0.3rem 0;font-size:0.8rem;color:#1A2744;border-bottom:1px solid #F0F4F8;"><span style="color:#00A844;font-weight:700;">{icon}</span>{item}</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="margin-top:1rem;background:rgba(255,179,0,0.07);border:1px solid rgba(255,179,0,0.25);border-radius:10px;padding:0.75rem 1rem;font-size:0.75rem;color:#7A5800;">
+      ⚡ Install <b>reportlab</b> to enable PDF export:<br>
+      <code style="background:rgba(0,0,0,0.06);padding:2px 6px;border-radius:4px;">pip install reportlab</code>
+    </div>
+    """, unsafe_allow_html=True)
+
+
 # ════════════════════════════════════════════════════════════════════
 #  FOOTER
 # ════════════════════════════════════════════════════════════════════
