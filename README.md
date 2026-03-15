@@ -8,7 +8,7 @@ This application predicts house prices using property features such as area, bed
 
 # 🚀 Live Demo
 
-*[https://ai-house-price-estimator.streamlit.app/]*
+*https://ai-house-price-estimator.streamlit.app/*
 
 
 ---
